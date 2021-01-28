@@ -384,7 +384,6 @@ a {
   display: block;
   background: #11121f;
   height: 53px;
-  padding-left: 60px;
   border: 1px solid #11121f;
   border-radius: 10px;
   border-top-left-radius: 25px;
@@ -394,7 +393,7 @@ a {
   overflow: hidden;
   white-space: nowrap;
 
-  transition: 0.3s;
+  transition: 0.5s;
 
   display: flex;
   align-items: center;
@@ -411,17 +410,26 @@ a {
   border-bottom-right-radius: 15px;
   left: 9px;
 
-  transition: 0.8s;
+  transition: 1s;
   transform-origin: center;
+  z-index: 9;
 }
 
-.roomslist-room input:checked + label {
-  color: #292a45;
+.roomslist-room label span {
+  margin-left: 60px;
+  transition: 0.5s;
+  z-index: 10;
 }
 
 .roomslist-room input:checked + label::before {
   transform: scale(15);
   border-radius: 0px;
+}
+
+.roomslist-room input:checked + label span {
+  font-weight: 600;
+  font-size: 18px;
+  margin-left: 25px;
 }
 
 .soccer-room label::before {

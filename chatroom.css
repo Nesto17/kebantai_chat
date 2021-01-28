@@ -675,6 +675,7 @@ a {
   left: 0;
   background: rgba(4, 0, 27, 0.85);
   display: none;
+  z-index: 100;
 }
 
 .application-box {

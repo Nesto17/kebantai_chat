@@ -55,7 +55,7 @@ a {
 }
 
 .page-header {
-  position: relative;
+  position: absolute;
   background: #001427;
   width: 100%;
 
@@ -248,7 +248,9 @@ a {
 }
 
 .content {
+  position: absolute;
   width: 100%;
+  bottom: 0;
 
   display: grid;
   grid-template-columns: 0.4fr 1fr 0.4fr;
@@ -315,10 +317,15 @@ a {
   display: none;
 }
 
-.roomslist-room {
+.radio-sample input {
+  display: none;
+}
+
+.radio-sample label {
   position: relative;
+  display: block;
   background: #11121f;
-  min-height: 53px;
+  height: 53px;
   margin-bottom: 25px;
   padding-left: 60px;
   border: 1px solid #11121f;
@@ -326,75 +333,135 @@ a {
   border-top-left-radius: 25px;
   border-bottom-right-radius: 25px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
   cursor: pointer;
+  overflow: hidden;
 
-  transition: all 0.3s ease-in-out;
+  transition: 0.3s;
 
   display: flex;
   align-items: center;
 }
 
-.roomslist-room input {
+.radio-sample label::before {
+  content: "";
   position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-.roomslist-room span {
-  position: absolute;
-  background: white;
-  width: 38px;
-  height: 38px;
+  background: linear-gradient(to bottom right, #4caa53, #b7ffcd);
+  width: 35px;
+  height: 35px;
   border-radius: 5px;
   border-top-left-radius: 15px;
   border-bottom-right-radius: 15px;
   left: 9px;
 
+  transition: 0.3s;
   transform-origin: right;
-  transition: 0.3s ease-in-out;
 }
 
-.roomslist-room p {
-  margin-left: 20px;
-}
-
-#basketball-checkmark {
-  background: linear-gradient(to bottom right, #ff7600, #ffc833);
-}
-
-#soccer-checkmark {
-  background: linear-gradient(to bottom right, #4caa53, #b7ffcd);
-}
-
-#badminton-checkmark {
-  background: linear-gradient(to bottom right, #ff93ea, #7600db);
-}
-
-#volleyball-checkmark {
-  background: linear-gradient(to bottom right, #cc2351, #ffa3ae);
-}
-
-.basketball-room:hover {
-  border: 1px solid #ffc833;
-  box-shadow: 0px 0px 15px rgba(254, 188, 47, 0.5);
-}
-
-.soccer-room:hover {
+.radio-sample label:hover {
   border: 1px solid #b7ffcd;
   box-shadow: 0px 0px 15px rgba(167, 255, 201, 0.3);
 }
 
-.badminton-room:hover {
+.radio-sample input:checked + label::before {
+  transform: scale(1.5);
+}
+
+.radio-sample input:checked + label {
+  border: 1px solid #b7ffcd;
+  box-shadow: 0px 0px 15px rgba(167, 255, 201, 0.3);
+}
+
+.roomslist-room {
+  margin-bottom: 25px;
+}
+
+.roomslist-room input {
+  display: none;
+}
+
+.roomslist-room label {
+  position: relative;
+  display: block;
+  background: #11121f;
+  height: 53px;
+  padding-left: 60px;
+  border: 1px solid #11121f;
+  border-radius: 10px;
+  border-top-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+
+  transition: 0.3s;
+
+  display: flex;
+  align-items: center;
+}
+
+.roomslist-room label::before {
+  content: "";
+  position: absolute;
+  background: linear-gradient(to top left, #ff7600, #ffc833);
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
+  border-top-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  left: 9px;
+
+  transition: 0.8s;
+  transform-origin: center;
+}
+
+.roomslist-room input:checked + label {
+  color: #292a45;
+}
+
+.roomslist-room input:checked + label::before {
+  transform: scale(15);
+  border-radius: 0px;
+}
+
+.soccer-room label::before {
+  background: linear-gradient(to top left, #4caa53, #b7ffcd);
+}
+
+.badminton-room label::before {
+  background: linear-gradient(to top left, #ff93ea, #7600db);
+}
+
+.volleyball-room label::before {
+  background: linear-gradient(to top left, #cc2351, #ffa3ae);
+}
+
+.basketball-room input:checked + label,
+.basketball-room input:hover + label {
+  border: 1px solid #ffc833;
+  box-shadow: 0px 0px 15px rgba(254, 188, 47, 0.5);
+}
+
+.soccer-room input:checked + label,
+.soccer-room input:hover + label {
+  border: 1px solid #b7ffcd;
+  box-shadow: 0px 0px 15px rgba(167, 255, 201, 0.3);
+}
+
+.badminton-room input:checked + label,
+.badminton-room input:hover + label {
   border: 1px solid #a138fd;
   box-shadow: 0px 0px 15px rgba(255, 125, 255, 0.3);
 }
 
-.volleyball-room:hover {
+.volleyball-room input:checked + label,
+.volleyball-room input:hover + label {
   border: 1px solid #ffa3ae;
   box-shadow: 0px 0px 15px rgba(255, 160, 184, 0.3);
+}
+
+.room-radio:checked span {
+  transform: scale(1.5);
 }
 
 .members-tab {
@@ -601,7 +668,7 @@ a {
 
 .application-box {
   width: 600px;
-  height: 350px;
+  height: 390px;
   position: relative;
   left: 50%;
   top: 20%;
@@ -636,6 +703,7 @@ a {
 .application-title {
   font-size: 20px;
   font-weight: 300;
+  margin-bottom: 10px;
 }
 
 .application-title span {
@@ -650,9 +718,28 @@ a {
   line-height: 35px;
 
   background: #11121f;
-  border-radius: 20px;
+  border-radius: 5px;
   padding: 20px;
   min-height: 170px;
+}
+
+.application-accept {
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  background: #ffc833;
+  box-shadow: 0px 0px 10px rgba(254, 188, 47, 0.5);
+  padding: 5px 50px;
+  border-radius: 20px;
+  border-bottom-left-radius: 7px;
+  border-top-right-radius: 7px;
+  cursor: pointer;
+
+  transition: 0.4s;
+}
+
+.application-accept:hover {
+  transform: scale(1.1);
 }
 
 @media (max-width: 1024px) {

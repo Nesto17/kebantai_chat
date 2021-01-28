@@ -54,3 +54,4 @@ for (let i = 0; i < rejectButton.length; i++) {
 applicationClose.addEventListener('click', () => {
     requestApplication.style.display = "none";
 });
+

@@ -416,6 +416,8 @@ a {
 }
 
 .roomslist-room label span {
+  font-size: 16px;
+  color: #bdbdbd;
   margin-left: 60px;
   transition: 0.5s;
   z-index: 10;
@@ -427,6 +429,7 @@ a {
 }
 
 .roomslist-room input:checked + label span {
+  color: #fff;
   font-weight: 600;
   font-size: 18px;
   margin-left: 25px;

@@ -447,6 +447,10 @@ a {
   background: linear-gradient(to top left, #cc2351, #ffa3ae);
 }
 
+.deleted-room label::before {
+  background: linear-gradient(to top left, #ff3b3b, #CB0000);
+}
+
 .basketball-room input:checked + label,
 .basketball-room input:hover + label {
   border: 1px solid #ffc833;
@@ -469,6 +473,12 @@ a {
 .volleyball-room input:hover + label {
   border: 1px solid #ffa3ae;
   box-shadow: 0px 0px 15px rgba(255, 160, 184, 0.3);
+}
+
+.deleted-room input:checked + label,
+.deleted-room input:hover + label {
+  border: 1px solid #ff3b3b;
+  box-shadow: 0px 0px 15px rgba(252, 59, 59, 0.5);
 }
 
 .room-radio:checked span {

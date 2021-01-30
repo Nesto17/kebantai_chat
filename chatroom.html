@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./chatroom.css">
+    <!-- Google fonts. -->
+    <link href='https://fonts.googleapis.com/css?family=Bungee Outline' rel='stylesheet' />
+    <link href='https://fonts.googleapis.com/css?family=Varela Round' rel='stylesheet' />
+    <!-- Use font awesome icons. -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <!-- Use firebase app and database. -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <link rel="stylesheet" href="./gabungan.css">
     <title>Chatroom - Kebantai</title>
 </head>
+
 <body>
-    <div class="wrapper"> 
+    <div class="wrapper">
         <header class="page-header">
             <div class="dark-background"></div>
             <div class="header-menu">
@@ -26,11 +36,12 @@
                         <p href="#" class="left-tab-name">About Us</p>
                     </a>
                     <a class="left-tab-options">
-                        <span href="#" class="left-tab-icon"><img src="./images/Header images/contact.svg" alt=""></span>
+                        <span href="#" class="left-tab-icon"><img src="./images/Header images/contact.svg"
+                                alt=""></span>
                         <p href="#" class="left-tab-name">Contact</p>
                     </a>
                 </ul>
-            </div> 
+            </div>
             <div class="navigation-toggle">
                 <img class="navigation-toggle-icon" src="./images/Header images/burger-icon.svg" alt="">
             </div>
@@ -139,13 +150,15 @@
                             <div class="accept-button"><img src="./images/accept-button.svg" alt=""></div>
                             <div class="reject-button"><img src="./images/reject-button.svg" alt=""></div>
                         </div>
-                </div>
+                    </div>
             </section>
             <div class="request-application">
                 <div class="application-box" action="">
                     <div class="application-close">+</div>
                     <h4 class="application-title"><span>Name's </span>Request Application</h4>
-                    <div class="application-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in. Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit vel nobis itaque velit dignissimos facere!</div>
+                    <div class="application-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in.
+                        Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit
+                        vel nobis itaque velit dignissimos facere!</div>
                     <div class="application-accept">accept</div>
                 </div>
             </div>
@@ -154,4 +167,5 @@
 
     <script src="./chatroom.js"></script>
 </body>
+
 </html>

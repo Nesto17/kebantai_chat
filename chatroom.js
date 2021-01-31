@@ -1,3 +1,15 @@
+var chat_others_toggle = document.createElement('div')
+chat_others_toggle.setAttribute('id', 'chat_others_toggle')
+chat_others_toggle.classList.add('chat_toggle')
+chat_others_toggle.innerHTML = 'Other Rooms'
+
+var chat_members_toggle = document.createElement('div')
+chat_members_toggle.setAttribute('id', 'chat_members_toggle')
+chat_members_toggle.classList.add('chat_toggle')
+chat_members_toggle.innerHTML = 'Members'
+
+
+
 let menuToggle = document.querySelector('.navigation-toggle');
 let rightTab = document.querySelector('.right-header-tab');
 let darkBackground = document.querySelector('.dark-background');
@@ -24,6 +36,8 @@ darkBackground.addEventListener('click', () => {
   headerLogo.classList.remove('active');
 
   rightTab.classList.remove('active');
+  roomslistTab.classList.remove('active');
+  membersTab.classList.remove('active');
 });
 
 menuToggle.addEventListener('click', () => {
@@ -53,15 +67,6 @@ for (let i = 0; i < rejectButton.length; i++) {
 applicationClose.addEventListener('click', () => {
   requestApplication.style.display = "none";
 });
-
-let otherRooms_toggle = document.querySelector('#chat_others_toggle');
-let members_toggle = document.querySelector('#chat_members_toggle');
-let roomslistTab = document.querySelector('.roomslist-tab');
-let membersTab = document.querySelector('.members-tab')
-
-// otherRooms_toggle.addEventListener('click', () => {
-
-// });
 
 /* 
 // CHATROOM 
@@ -209,16 +214,6 @@ window.onload = function () {
       var chat_title = document.createElement('div')
       chat_title.setAttribute('id', 'chat_title')
       chat_title.innerHTML = 'Latihan Basket';
-
-      var chat_others_toggle = document.createElement('div')
-      chat_others_toggle.setAttribute('id', 'chat_others_toggle')
-      chat_others_toggle.classList.add('chat_toggle')
-      chat_others_toggle.innerHTML = 'Other Rooms'
-
-      var chat_members_toggle = document.createElement('div')
-      chat_members_toggle.setAttribute('id', 'chat_members_toggle')
-      chat_members_toggle.classList.add('chat_toggle')
-      chat_members_toggle.innerHTML = 'Members'
 
       chat_title.append(chat_others_toggle, chat_members_toggle)
 
@@ -572,3 +567,18 @@ window.onload = function () {
   // })
 
 }
+
+// let otherRooms_toggle = document.getElementById('chat_others_toggle');
+// let members_toggle = document.querySelector('#chat_members_toggle');
+let roomslistTab = document.querySelector('.roomslist-tab');
+let membersTab = document.querySelector('.members-tab')
+
+chat_others_toggle.addEventListener('click', () => {
+  roomslistTab.classList.toggle('active');
+  darkBackground.classList.toggle('active');
+});
+
+chat_members_toggle.addEventListener('click', () => {
+  membersTab.classList.toggle('active');
+  darkBackground.classList.toggle('active');
+});

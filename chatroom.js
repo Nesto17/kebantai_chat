@@ -218,7 +218,8 @@ window.onload = function () {
       /*-----------------------------------------*/
 
       // Get the name of the user
-      chat_input.placeholder = `${parent.get_name()}. Say something...`
+      // chat_input.placeholder = `${parent.get_name()}. Say something...`
+      chat_input.placeholder = 'Enter your messages';
       chat_input.onkeyup = function () {
         if (chat_input.value.length > 0) {
           chat_input_send.removeAttribute('disabled')
@@ -321,12 +322,38 @@ window.onload = function () {
 
       // KODE TAMBAHAN
 
-      for (let i = 0; i < 3; i++) {
-        var name = "Joseph";
-        var message = "Hello";
+      for (let i = 0; i < 5; i++) {
+        if (i === 0) {
+          var name = "Joseph";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        }
+
+        if (i === 1) {
+          var name = "Theo";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
+        }
+        
+        if (i === 2) {
+          var name = "Ernest";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        }
+
+        if (i === 3) {
+          var name = "Joseph";
+          var message = "Ahahahahaahahaah LMAO XD";
+        }
+
+        if (i === 4) {
+          var name = "Theo";
+          var message = "wkwkwkkwkwkwkwkwkwk";
+        }
 
         var message_container = document.createElement('div')
         message_container.setAttribute('class', 'message_container')
+
+        if (i === 2) {
+          message_container.classList.add('message_container_main')
+        }
 
         var message_inner_container = document.createElement('div')
         message_inner_container.setAttribute('class', 'message_inner_container')

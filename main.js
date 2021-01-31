@@ -181,6 +181,7 @@ window.onload = function () {
 
             // Get the name of the user
             chat_input.placeholder = `${parent.get_name()}. Say something...`
+            // chat_input.placeholder = 'Enter a message';
             chat_input.onkeyup = function () {
                 if (chat_input.value.length > 0) {
                     chat_input_send.removeAttribute('disabled')

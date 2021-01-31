@@ -5,21 +5,35 @@
   display: flex;
   justify-content: center;
 
-  padding-top: 80px;
   padding-bottom: 20px;
   /* Fade in container */
   animation: fadeIn 1s linear;
-
 }
 
 #chat_inner_container{
   width: 95%;
   height: 100%;
-  padding: 0px 5px;
+  /* padding: 0px 15px; */
 
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+
+#chat_title {
+  font-size: 20px;
+  font-weight: 600;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
+  height: 60px;
+  width: 100%;
+  background: linear-gradient(90deg, #FEBC2F, #FD8725);
+  border-radius: 20px;
+  box-shadow: 0px 0px 15px rgba(254, 188, 47, 0.4);
+  margin-bottom: 15px;
+
+  display: flex;
+  align-items: center;
+  padding-left: 50px;
 }
 
 #chat_content_container{
@@ -128,7 +142,7 @@
   background: #292a45;
   padding: 12px 15px;
   border-radius: 15px;
-  font-weight: 200;
+  font-weight: 300;
   font-size: 12px;
   margin-top: 5px;
 }
@@ -257,7 +271,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 0px;
+  padding: 20px 0px 0px;
 }
 
 .header-menu {
@@ -448,12 +462,12 @@ a {
   bottom: 0;
 
   display: grid;
-  grid-template-columns: 0.4fr 1fr 0.4fr;
+  grid-template-columns: 0.4fr 1.1fr 0.4fr;
 }
 
 .edge-tab {
-  height: 83vh;
   background: #292a45;
+  height: 85vh;
 
   display: flex;
   flex-direction: column;
@@ -512,60 +526,6 @@ a {
   display: none;
 }
 
-.radio-sample input {
-  display: none;
-}
-
-.radio-sample label {
-  position: relative;
-  display: block;
-  background: #11121f;
-  height: 53px;
-  margin-bottom: 25px;
-  padding-left: 60px;
-  border: 1px solid #11121f;
-  border-radius: 10px;
-  border-top-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
-  overflow: hidden;
-
-  transition: 0.3s;
-
-  display: flex;
-  align-items: center;
-}
-
-.radio-sample label::before {
-  content: "";
-  position: absolute;
-  background: linear-gradient(to bottom right, #4caa53, #b7ffcd);
-  width: 35px;
-  height: 35px;
-  border-radius: 5px;
-  border-top-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  left: 9px;
-
-  transition: 0.3s;
-  transform-origin: right;
-}
-
-.radio-sample label:hover {
-  border: 1px solid #b7ffcd;
-  box-shadow: 0px 0px 15px rgba(167, 255, 201, 0.3);
-}
-
-.radio-sample input:checked + label::before {
-  transform: scale(1.5);
-}
-
-.radio-sample input:checked + label {
-  border: 1px solid #b7ffcd;
-  box-shadow: 0px 0px 15px rgba(167, 255, 201, 0.3);
-}
-
 .roomslist-room {
   margin-bottom: 25px;
 }
@@ -605,13 +565,13 @@ a {
   border-bottom-right-radius: 15px;
   left: 9px;
 
-  transition: 1s;
+  transition: 1s ease-in-out;
   transform-origin: center;
   z-index: 9;
 }
 
 .roomslist-room label span {
-  font-size: 16px;
+  font-size: 14px;
   color: #bdbdbd;
   margin-left: 60px;
   transition: 0.5s;
@@ -619,14 +579,14 @@ a {
 }
 
 .roomslist-room input:checked + label::before {
-  transform: scale(15);
+  transform: scale(14);
   border-radius: 0px;
 }
 
 .roomslist-room input:checked + label span {
   color: #fff;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
   margin-left: 25px;
 }
  
@@ -746,9 +706,11 @@ a {
   color: #76778b;
   font-size: 15px;
   font-weight: 600;
+  white-space: nowrap;
 
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 .members-amount {
@@ -813,6 +775,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: nowrap;
 }
 
 .members-pending-list {
@@ -1121,6 +1084,42 @@ a {
   .right-tab-icon img {
     width: 20px;
     height: 20px;
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+    grid-row: 1fr;
+  }
+
+  .content section {
+    grid-column: 1/2;
+    grid-row: 1/2;
+  }
+
+  .edge-tab {
+    height: 87vh;
+  }
+
+  .roomslist-tab {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    justify-self: flex-start;
+  }
+
+  .members-tab {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+
+    justify-self: flex-end;
+  }
+
+  #chat_title {
+    justify-content: center;
+    padding-left: 0px;
+    height: 50px;
   }
 }
 

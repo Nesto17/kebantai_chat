@@ -195,6 +195,13 @@ window.onload = function () {
       var chat_inner_container = document.createElement('div')
       chat_inner_container.setAttribute('id', 'chat_inner_container')
 
+      var chat_title = document.createElement('div')
+      chat_title.setAttribute('id', 'chat_title')
+      chat_title.innerHTML = 'Latihan Basket';
+
+      var chat_members_toggle = document.createElement('div')
+      chat_members_toggle.setAttribute('class', 'chat_members_toggle')
+
       var chat_content_container = document.createElement('div')
       chat_content_container.setAttribute('id', 'chat_content_container')
 
@@ -261,7 +268,7 @@ window.onload = function () {
       // chat_logout_container.append(chat_logout)
 
       chat_input_container.append(chat_input, chat_input_send)
-      chat_inner_container.append(chat_content_container, chat_input_container)
+      chat_inner_container.append(chat_title, chat_content_container, chat_input_container)
       chat_container.append(chat_inner_container)
       chatroom.append(chat_container)
       // After creating the chat. We immediatly create a loading circle in the 'chat_content_container'
@@ -322,7 +329,7 @@ window.onload = function () {
 
       // KODE TAMBAHAN
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 8; i++) {
         if (i === 0) {
           var name = "Joseph";
           var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
@@ -348,10 +355,25 @@ window.onload = function () {
           var message = "wkwkwkkwkwkwkwkwkwk";
         }
 
+        if (i === 5) {
+          var name = "Ernest";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
+        }
+
+        if (i === 6) {
+          var name = "Theo";
+          var message = "WKWKWKWKWKWKWKWWKWKWKWKWKWKWKWWKWKWKWKWKWWKW";
+        }
+
+        if (i === 7) {
+          var name = "Joseph";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        }
+
         var message_container = document.createElement('div')
         message_container.setAttribute('class', 'message_container')
 
-        if (i === 2) {
+        if (i === 2 || i === 5) {
           message_container.classList.add('message_container_main')
         }
 

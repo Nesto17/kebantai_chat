@@ -54,6 +54,15 @@ applicationClose.addEventListener('click', () => {
   requestApplication.style.display = "none";
 });
 
+let otherRooms_toggle = document.querySelector('#chat_others_toggle');
+let members_toggle = document.querySelector('#chat_members_toggle');
+let roomslistTab = document.querySelector('.roomslist-tab');
+let membersTab = document.querySelector('.members-tab')
+
+// otherRooms_toggle.addEventListener('click', () => {
+
+// });
+
 /* 
 // CHATROOM 
 */
@@ -195,12 +204,23 @@ window.onload = function () {
       var chat_inner_container = document.createElement('div')
       chat_inner_container.setAttribute('id', 'chat_inner_container')
 
+      // TAMBAHAN
+
       var chat_title = document.createElement('div')
       chat_title.setAttribute('id', 'chat_title')
       chat_title.innerHTML = 'Latihan Basket';
 
+      var chat_others_toggle = document.createElement('div')
+      chat_others_toggle.setAttribute('id', 'chat_others_toggle')
+      chat_others_toggle.classList.add('chat_toggle')
+      chat_others_toggle.innerHTML = 'Other Rooms'
+
       var chat_members_toggle = document.createElement('div')
-      chat_members_toggle.setAttribute('class', 'chat_members_toggle')
+      chat_members_toggle.setAttribute('id', 'chat_members_toggle')
+      chat_members_toggle.classList.add('chat_toggle')
+      chat_members_toggle.innerHTML = 'Members'
+
+      chat_title.append(chat_others_toggle, chat_members_toggle)
 
       var chat_content_container = document.createElement('div')
       chat_content_container.setAttribute('id', 'chat_content_container')

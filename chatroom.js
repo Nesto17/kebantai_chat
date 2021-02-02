@@ -66,6 +66,44 @@ applicationClose.addEventListener('click', () => {
   requestApplication.style.display = "none";
 });
 
+let roomslistTab = document.querySelector('.roomslist-tab');
+let membersTab = document.querySelector('.members-tab')
+
+chat_others_toggle.addEventListener('click', () => {
+  roomslistTab.classList.toggle('active');
+  darkBackground.classList.toggle('active');
+});
+
+chat_members_toggle.addEventListener('click', () => {
+  membersTab.classList.toggle('active');
+  darkBackground.classList.toggle('active');
+});
+
+const disabledWindow = document.querySelector('.disabled');
+const eventMembersSwitch = document.querySelector('.members-event-switch');
+const pendingMembersSwitch = document.querySelector('.members-pending-switch');
+const eventMembersWindow = document.querySelector('.event-members');
+const pendingMembersWindow = document.querySelector('.pending-members');
+
+pendingMembersSwitch.addEventListener('click', () => {
+  if (pendingMembersSwitch.classList.contains("disabled")) {
+    pendingMembersSwitch.classList.remove("disabled");
+    eventMembersSwitch.classList.add("disabled");
+    eventMembersWindow.style.display = "none";
+    pendingMembersWindow.style.display = "unset";
+  }
+});
+
+
+eventMembersSwitch.addEventListener('click', () => {
+  if (eventMembersSwitch.classList.contains("disabled")) {
+    eventMembersSwitch.classList.remove("disabled");
+    pendingMembersSwitch.classList.add("disabled");
+    pendingMembersWindow.style.display = "none";
+    eventMembersWindow.style.display = "unset";
+  }
+});
+
 /* 
 // CHATROOM 
 */
@@ -578,15 +616,3 @@ window.onload = function () {
 
 // let otherRooms_toggle = document.getElementById('chat_others_toggle');
 // let members_toggle = document.querySelector('#chat_members_toggle');
-let roomslistTab = document.querySelector('.roomslist-tab');
-let membersTab = document.querySelector('.members-tab')
-
-chat_others_toggle.addEventListener('click', () => {
-  roomslistTab.classList.toggle('active');
-  darkBackground.classList.toggle('active');
-});
-
-chat_members_toggle.addEventListener('click', () => {
-  membersTab.classList.toggle('active');
-  darkBackground.classList.toggle('active');
-});

@@ -1,3 +1,13 @@
+var chat_others_toggle = document.createElement('div')
+chat_others_toggle.setAttribute('id', 'chat_others_toggle')
+chat_others_toggle.classList.add('chat_toggle')
+
+var chat_members_toggle = document.createElement('div')
+chat_members_toggle.setAttribute('id', 'chat_members_toggle')
+chat_members_toggle.classList.add('chat_toggle')
+
+
+
 let menuToggle = document.querySelector('.navigation-toggle');
 let rightTab = document.querySelector('.right-header-tab');
 let darkBackground = document.querySelector('.dark-background');
@@ -24,6 +34,8 @@ darkBackground.addEventListener('click', () => {
   headerLogo.classList.remove('active');
 
   rightTab.classList.remove('active');
+  roomslistTab.classList.remove('active');
+  membersTab.classList.remove('active');
 });
 
 menuToggle.addEventListener('click', () => {
@@ -52,6 +64,44 @@ for (let i = 0; i < rejectButton.length; i++) {
 
 applicationClose.addEventListener('click', () => {
   requestApplication.style.display = "none";
+});
+
+let roomslistTab = document.querySelector('.roomslist-tab');
+let membersTab = document.querySelector('.members-tab')
+
+chat_others_toggle.addEventListener('click', () => {
+  roomslistTab.classList.toggle('active');
+  darkBackground.classList.toggle('active');
+});
+
+chat_members_toggle.addEventListener('click', () => {
+  membersTab.classList.toggle('active');
+  darkBackground.classList.toggle('active');
+});
+
+const disabledWindow = document.querySelector('.disabled');
+const eventMembersSwitch = document.querySelector('.members-event-switch');
+const pendingMembersSwitch = document.querySelector('.members-pending-switch');
+const eventMembersWindow = document.querySelector('.event-members');
+const pendingMembersWindow = document.querySelector('.pending-members');
+
+pendingMembersSwitch.addEventListener('click', () => {
+  if (pendingMembersSwitch.classList.contains("disabled")) {
+    pendingMembersSwitch.classList.remove("disabled");
+    eventMembersSwitch.classList.add("disabled");
+    eventMembersWindow.style.display = "none";
+    pendingMembersWindow.style.display = "unset";
+  }
+});
+
+
+eventMembersSwitch.addEventListener('click', () => {
+  if (eventMembersSwitch.classList.contains("disabled")) {
+    eventMembersSwitch.classList.remove("disabled");
+    pendingMembersSwitch.classList.add("disabled");
+    pendingMembersWindow.style.display = "none";
+    eventMembersWindow.style.display = "unset";
+  }
 });
 
 /* 
@@ -195,6 +245,24 @@ window.onload = function () {
       var chat_inner_container = document.createElement('div')
       chat_inner_container.setAttribute('id', 'chat_inner_container')
 
+      // TAMBAHAN
+
+      var chat_title = document.createElement('div')
+      chat_title.setAttribute('id', 'chat_title')
+      chat_title.innerHTML = 'Latihan Basket'
+
+      var chat_others_text = document.createElement('p')
+      var chat_others_logo = document.createElement('span')
+      var chat_members_text = document.createElement('p')
+      var chat_members_logo = document.createElement('span')
+
+      chat_others_text.innerHTML = 'Other Rooms'
+      chat_members_text.innerHTML = 'Members'
+
+      chat_title.append(chat_others_toggle, chat_members_toggle)
+      chat_others_toggle.append(chat_others_logo, chat_others_text)
+      chat_members_toggle.append(chat_members_logo, chat_members_text)
+
       var chat_content_container = document.createElement('div')
       chat_content_container.setAttribute('id', 'chat_content_container')
 
@@ -218,7 +286,8 @@ window.onload = function () {
       /*-----------------------------------------*/
 
       // Get the name of the user
-      chat_input.placeholder = `${parent.get_name()}. Say something...`
+      // chat_input.placeholder = `${parent.get_name()}. Say something...`
+      chat_input.placeholder = 'Enter your messages';
       chat_input.onkeyup = function () {
         if (chat_input.value.length > 0) {
           chat_input_send.removeAttribute('disabled')
@@ -260,7 +329,7 @@ window.onload = function () {
       // chat_logout_container.append(chat_logout)
 
       chat_input_container.append(chat_input, chat_input_send)
-      chat_inner_container.append(chat_content_container, chat_input_container)
+      chat_inner_container.append(chat_title, chat_content_container, chat_input_container)
       chat_container.append(chat_inner_container)
       chatroom.append(chat_container)
       // After creating the chat. We immediatly create a loading circle in the 'chat_content_container'
@@ -321,12 +390,53 @@ window.onload = function () {
 
       // KODE TAMBAHAN
 
-      for (let i = 0; i < 3; i++) {
-        var name = "Joseph";
-        var message = "Hello";
+      for (let i = 0; i < 8; i++) {
+        if (i === 0) {
+          var name = "Joseph";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        }
+
+        if (i === 1) {
+          var name = "Theo";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
+        }
+        
+        if (i === 2) {
+          var name = "Ernest";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        }
+
+        if (i === 3) {
+          var name = "Joseph";
+          var message = "Ahahahahaahahaah LMAO XD";
+        }
+
+        if (i === 4) {
+          var name = "Theo";
+          var message = "wkwkwkkwkwkwkwkwkwk";
+        }
+
+        if (i === 5) {
+          var name = "Ernest";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
+        }
+
+        if (i === 6) {
+          var name = "Theo";
+          var message = "WKWKWKWKWKWKWKWWKWKWKWKWKWKWKWWKWKWKWKWKWWKW";
+        }
+
+        if (i === 7) {
+          var name = "Joseph";
+          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+        }
 
         var message_container = document.createElement('div')
         message_container.setAttribute('class', 'message_container')
+
+        if (i === 2 || i === 5) {
+          message_container.classList.add('message_container_main')
+        }
 
         var message_inner_container = document.createElement('div')
         message_inner_container.setAttribute('class', 'message_inner_container')
@@ -503,3 +613,6 @@ window.onload = function () {
   // })
 
 }
+
+// let otherRooms_toggle = document.getElementById('chat_others_toggle');
+// let members_toggle = document.querySelector('#chat_members_toggle');

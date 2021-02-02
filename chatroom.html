@@ -12,7 +12,7 @@
     <!-- Use firebase app and database. -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
-    <link rel="stylesheet" href="./gabungan.css">
+    <link rel="stylesheet" href="./chatroom.css">
     <title>Chatroom - Kebantai</title>
 </head>
 
@@ -46,7 +46,7 @@
                 <img class="navigation-toggle-icon" src="./images/Header images/burger-icon.svg" alt="">
             </div>
             <div class="navigation right-header-tab">
-                <a href="#" class="right-tab-options  active-page">
+                <a href="#" class="right-tab-options">
                     <span class="right-tab-icon"><img src="./images/Header images/post.svg" alt=""></span>
                     <p class="right-tab-name">Post Requests</p>
                 </a>
@@ -58,7 +58,7 @@
                     <span class="right-tab-icon"><img src="./images/Header images/schedule.svg" alt=""></span>
                     <p class="right-tab-name">Schedule</p>
                 </a>
-                <a href="#" class="right-tab-options">
+                <a href="#" class="right-tab-options  active-page">
                     <span class="right-tab-icon"><img src="./images/Header images/chatroom.svg" alt=""></span>
                     <p class="right-tab-name">Chatroom</p>
                 </a>
@@ -76,7 +76,7 @@
                 </div>
                 <form class="roomslist">
                     <div class="basketball-room roomslist-room">
-                        <input type="radio" name="room" class="room-radio" id="#1">
+                        <input type="radio" name="room" class="room-radio" id="#1" checked="checked">
                         <label for="#1"><span>Latihan Basket</span></label>
                     </div>
                     <div class="soccer-room roomslist-room">
@@ -91,7 +91,7 @@
                         <input type="radio" name="room" class="room-radio" id="#4">
                         <label for="#4"><span>Latihan Voli</span></label>
                     </div>
-                    <div class="badminton-room roomslist-room">
+                    <div class="badminton-room roomslist-room deleted-room">
                         <input type="radio" name="room" class="room-radio" id="#5">
                         <label for="#5"><span>Latihan Badmin</span></label>
                     </div>
@@ -120,8 +120,58 @@
                     <h3>Members</h3>
                     <span class="roomslist-logo"><img src="./images/Header images/profile.svg" alt=""></span>
                 </div>
-                <div class="members-event members">
-                    <p class="members-subtitle">EVENT MEMBERS <span class="members-amount">04 / 10</span></p>
+                <div class="members-switch">
+                    <div class="members-event-switch">
+                        MEMBERS
+                    </div>
+                    <div class="members-pending-switch disabled">
+                        PENDING
+                    </div>
+                </div>
+                <div class="members">
+                    <div class="event-members">
+                        <p class="members-event-list male">Abasda <span class="members-age">, 56</span></p>
+                        <p class="members-event-list female">JAJSA <span class="members-age">, 12</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                        <p class="members-event-list male">Abasda <span class="members-age">, 56</span></p>
+                        <p class="members-event-list female">JAJSA <span class="members-age">, 12</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                        <p class="members-event-list male">Abasda <span class="members-age">, 56</span></p>
+                        <p class="members-event-list female">JAJSA <span class="members-age">, 12</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                        <p class="members-event-list male">Abasda <span class="members-age">, 56</span></p>
+                        <p class="members-event-list female">JAJSA <span class="members-age">, 12</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                        <p class="members-event-list male">jasSJ <span class="members-age">, 32</span></p>
+                    </div>
+                    <div class="pending-members">
+                        <div class="members-pending-group">
+                            <p class="members-pending-list female">asdbasdasda<span class="members-age">, 102</span></p>
+                            <div class="buttons">
+                                <div class="accept-button"><img src="./images/accept-button.svg" alt=""></div>
+                                <div class="reject-button"><img src="./images/reject-button.svg" alt=""></div>
+                            </div>
+                        </div>
+                        <div class="members-pending-group">
+                            <p class="members-pending-list female">Hellll<span class="members-age">, 12</span></p>
+                            <div class="buttons">
+                                <div class="accept-button"><img src="./images/accept-button.svg" alt=""></div>
+                                <div class="reject-button"><img src="./images/reject-button.svg" alt=""></div>
+                            </div>
+                        </div>
+                        <div class="members-pending-group">
+                            <p class="members-pending-list male">JAAJAJ<span class="members-age">, 54</span></p>
+                            <div class="buttons">
+                                <div class="accept-button"><img src="./images/accept-button.svg" alt=""></div>
+                                <div class="reject-button"><img src="./images/reject-button.svg" alt=""></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="members-event members">
+                    <p class="members-subtitle">EVENT MEMBERS <span class="members-amount">03 / 10</span></p>
 
                     <p class="members-event-list male">Abasda <span class="members-age">, 56</span></p>
                     <p class="members-event-list female">JAJSA <span class="members-age">, 12</span></p>
@@ -151,6 +201,7 @@
                             <div class="reject-button"><img src="./images/reject-button.svg" alt=""></div>
                         </div>
                     </div>
+                </div>     -->
             </section>
             <div class="request-application">
                 <div class="application-box" action="">
@@ -159,7 +210,7 @@
                     <div class="application-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in.
                         Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit
                         vel nobis itaque velit dignissimos facere!</div>
-                    <div class="application-accept">accept</div>
+                    <div class="application-accept">ACCEPT</div>
                 </div>
             </div>
         </div>

@@ -57,13 +57,14 @@
 }
 
 #chat_content_container::-webkit-scrollbar {
-  background: #000a14;
-  width: 7px;
+  background: transparent;
+  width: 8px;
   border-radius: 5px;
 }
 
 #chat_content_container::-webkit-scrollbar-thumb {
-  background: #ff8316;
+  /* background: #ff8316; */
+  background: #2a2c42;
   border-radius: 5px;
 }
 
@@ -192,30 +193,6 @@
   border-right: 6px solid #e9fff9;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes blur {
-  0% {
-    filter: blur(5px);
-  }
-  100% {
-  }
-}
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
 @font-face {
@@ -236,7 +213,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
   background: #001427;
 }
@@ -263,7 +240,10 @@ a {
   left: 0;
   opacity: 0;
   pointer-events: none;
+  overflow-y: scroll;
+
   transition: 0.3s ease-in-out;
+
   z-index: 49;
 }
 
@@ -273,7 +253,7 @@ a {
 }
 
 .page-header {
-  position: absolute;
+  position: relative;
   background: #001427;
   width: 100%;
 
@@ -944,9 +924,8 @@ a {
     width: 0;
     opacity: 1;
     pointer-events: unset;
-    border-radius: 25px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border-radius: 0px;
+    border-bottom-right-radius: 30px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
     overflow: hidden;
     transition: 0.2s ease-in-out;
@@ -1050,9 +1029,8 @@ a {
 
     width: 0;
     height: 65%;
-    border-radius: 30px;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: 0px;
+    border-bottom-left-radius: 30px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
     overflow: hidden;
     transition: 0.2s ease-in-out;
@@ -1099,7 +1077,8 @@ a {
 
   .content {
     grid-template-columns: 1fr;
-    grid-row: 1fr;
+    grid-template-rows: 1fr;
+    height: 88vh;
   }
 
   .content section {
@@ -1107,15 +1086,17 @@ a {
     grid-row: 1/2;
   }
 
-  .edge-tab {
+  /* .edge-tab {
     height: 87vh;
-  }
+  } */
 
   .roomslist-tab {
     width: 0;
+    height: 100vh;
     opacity: 0;
     pointer-events: none;
-    transform-origin: left;
+    position: fixed;
+    top: 0;
 
     transition: 0.5s;
 
@@ -1124,8 +1105,12 @@ a {
 
   .members-tab {
     width: 0;
+    height: 100vh;
     opacity: 0;
     pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
 
     transition: 0.5s;
 
@@ -1143,11 +1128,7 @@ a {
     font-size: 12px;
     font-weight: 600;
     text-shadow: none;
-    background: linear-gradient(
-      -90deg,
-      rgba(255, 255, 255, 0.3),
-      rgba(255, 255, 255, 0.55)
-    );
+    background: #292a45;
     min-width: 130px;
     padding: 8px 6px;
     box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
@@ -1170,18 +1151,24 @@ a {
     order: -1;
   }
 
+  #chat_content_container {
+    padding: 10px 20px;
+  }
+
+  #chat_input_container {
+    height: 55px;
+  }
+
   .roomslist-tab.active {
-    position: fixed;
     width: 300px;
     opacity: 1;
     pointer-events: unset;
+
 
     z-index: 50;
   }
 
   .members-tab.active {
-    position: fixed;
-    right: 0;
     width: 300px;
     opacity: 1;
     pointer-events: unset;
@@ -1191,6 +1178,10 @@ a {
 }
 
 @media (max-width: 616px) {
+  .header-menu {
+    margin-left: 1.5rem;
+  }
+
   .left-header-tab.active,
   .right-header-tab.active {
     width: 40%;
@@ -1200,7 +1191,7 @@ a {
   .left-tab-options:hover,
   .right-tab-options,
   .right-tab-options:hover {
-    padding: 5vh 200px 5vh 18px;
+    padding: 5vh 200px 5vh 25px;
   }
 
   .left-tab-name,
@@ -1210,20 +1201,45 @@ a {
 }
 
 @media (max-width: 520px) {
-  /* #chat_title {
-    padding: 10px 15px;
+  #chat_title {
+    padding: 0px 12px;
   }
 
   .chat_toggle {
-    min-width: 60px;
-  } */
+    min-width: 0px;
+    padding: 8px 13px;
+    background: #292a45;
+  }
+
+  .chat_toggle p {
+    display: none;
+  }
+
+  .chat_toggle span {
+    background: url("./images/group.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 476px) {
+  .content {
+    place-items: center;
+    align-items: stretch;
+  }
+
+  #chat_container {
+    width: 420px;
+  }
+
+  #chat_content_container {
+    padding: 10px 10px 10px 0px;
+  }
 }
 
 @media (max-width: 415px) {
-  .header-menu {
-    margin-left: 1.5rem;
-  }
-
   .right-header-tab.active,
   .left-header-tab.active {
     width: 45%;
@@ -1246,5 +1262,43 @@ a {
 
   .left-tab-icon {
     margin-bottom: 3px;
+  }
+
+  #chat_container {
+    width: 370px;
+  }
+}
+
+@media (max-width: 370px) {
+  #chat_title {
+    font-size: 18px;
+  }
+
+  .chat_toggle span {
+    height: 18px;
+    width: 18px;
+  }
+
+  #chat_container {
+    width: 310px;
+  }
+
+  .edge-tab.active {
+    width: 250px;
+  }
+}
+
+@media (max-height: 600px) {
+  .wrapper {
+    overflow-y: scroll;
+  }
+
+  .content {
+    position: relative;
+    top: 10vh;
+  }
+
+  .edge-tab div[class*="title"]{
+    display: none;
   }
 }

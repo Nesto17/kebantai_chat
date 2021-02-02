@@ -1,12 +1,10 @@
 var chat_others_toggle = document.createElement('div')
 chat_others_toggle.setAttribute('id', 'chat_others_toggle')
 chat_others_toggle.classList.add('chat_toggle')
-chat_others_toggle.innerHTML = 'Other Rooms'
 
 var chat_members_toggle = document.createElement('div')
 chat_members_toggle.setAttribute('id', 'chat_members_toggle')
 chat_members_toggle.classList.add('chat_toggle')
-chat_members_toggle.innerHTML = 'Members'
 
 
 
@@ -213,9 +211,19 @@ window.onload = function () {
 
       var chat_title = document.createElement('div')
       chat_title.setAttribute('id', 'chat_title')
-      chat_title.innerHTML = 'Latihan Basket';
+      chat_title.innerHTML = 'Latihan Basket'
+
+      var chat_others_text = document.createElement('p')
+      var chat_others_logo = document.createElement('span')
+      var chat_members_text = document.createElement('p')
+      var chat_members_logo = document.createElement('span')
+
+      chat_others_text.innerHTML = 'Other Rooms'
+      chat_members_text.innerHTML = 'Members'
 
       chat_title.append(chat_others_toggle, chat_members_toggle)
+      chat_others_toggle.append(chat_others_logo, chat_others_text)
+      chat_members_toggle.append(chat_members_logo, chat_members_text)
 
       var chat_content_container = document.createElement('div')
       chat_content_container.setAttribute('id', 'chat_content_container')

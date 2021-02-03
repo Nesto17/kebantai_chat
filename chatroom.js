@@ -6,8 +6,6 @@ var chat_members_toggle = document.createElement('div')
 chat_members_toggle.setAttribute('id', 'chat_members_toggle')
 chat_members_toggle.classList.add('chat_toggle')
 
-
-
 let menuToggle = document.querySelector('.navigation-toggle');
 let rightTab = document.querySelector('.right-header-tab');
 let darkBackground = document.querySelector('.dark-background');
@@ -103,6 +101,23 @@ eventMembersSwitch.addEventListener('click', () => {
     eventMembersWindow.style.display = "unset";
   }
 });
+
+// GET ROOM ID
+let room_id = "";
+let roomlist = document.querySelectorAll(".roomslist-room");
+roomlist.forEach(room => {
+  room.addEventListener("click", () => {
+    let input_id = room.querySelector("input").id;
+    if (room_id !== input_id) {
+      room_id = input_id;
+      console.log(room_id);
+      let title_chat = document.getElementById("chat_title").querySelector("h4");
+      let label_room = room.querySelector("label");
+      let span_room = label_room.querySelector("span");
+      title_chat.innerHTML = span_room.innerHTML;
+    }
+  })
+})
 
 /* 
 // CHATROOM 
@@ -247,9 +262,10 @@ window.onload = function () {
 
       // TAMBAHAN
 
-      var chat_title = document.createElement('div')
+      var chat_title = document.createElement('div');
+      var chat_title_h2 = document.createElement('h4');
       chat_title.setAttribute('id', 'chat_title')
-      chat_title.innerHTML = 'Latihan Basket'
+      chat_title_h2.innerHTML = 'Latihan Basket';
 
       var chat_others_text = document.createElement('p')
       var chat_others_logo = document.createElement('span')
@@ -259,7 +275,7 @@ window.onload = function () {
       chat_others_text.innerHTML = 'Other Rooms'
       chat_members_text.innerHTML = 'Members'
 
-      chat_title.append(chat_others_toggle, chat_members_toggle)
+      chat_title.append(chat_others_toggle, chat_members_toggle, chat_title_h2)
       chat_others_toggle.append(chat_others_logo, chat_others_text)
       chat_members_toggle.append(chat_members_logo, chat_members_text)
 
@@ -385,8 +401,10 @@ window.onload = function () {
       }
     }
     // Refresh chat gets the message/chat data from firebase
-    refresh_chat() {
+    refresh_chat(room_id_new) {
       var chat_content_container = document.getElementById('chat_content_container')
+
+      console.log(room_id_new)
 
       // KODE TAMBAHAN
 
@@ -400,7 +418,7 @@ window.onload = function () {
           var name = "Theo";
           var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
         }
-        
+
         if (i === 2) {
           var name = "Ernest";
           var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
@@ -591,6 +609,8 @@ window.onload = function () {
   if (app.get_name() != null) {
     app.chat()
   }
+
+  // app.refresh_chat("hello");
 
   // db.ref('all_chats' + '/chats_1').once('value', function (message_object) {
   //     // This index is mortant. It will help organize the chat in order

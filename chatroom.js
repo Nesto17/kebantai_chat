@@ -275,7 +275,7 @@ window.onload = function () {
       chat_others_text.innerHTML = 'Other Rooms'
       chat_members_text.innerHTML = 'Members'
 
-      chat_title.append(chat_others_toggle, chat_members_toggle, chat_title_h2)
+      chat_title.append(chat_others_toggle, chat_title_h2, chat_members_toggle)
       chat_others_toggle.append(chat_others_logo, chat_others_text)
       chat_members_toggle.append(chat_members_logo, chat_members_text)
 

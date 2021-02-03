@@ -111,10 +111,25 @@ roomlist.forEach(room => {
     if (room_id !== input_id) {
       room_id = input_id;
       console.log(room_id);
+
+      let chat_title_html = document.getElementById("chat_title");
       let title_chat = document.getElementById("chat_title").querySelector("h4");
       let label_room = room.querySelector("label");
       let span_room = label_room.querySelector("span");
       title_chat.innerHTML = span_room.innerHTML;
+
+      console.log(room.className.split(" ")[0]);
+      let class_room = room.className.split(" ")[0];
+      if (class_room == "basketball-room") {
+        chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
+      } else if (class_room == "soccer-room") {
+        chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
+      } else if (class_room == "badminton-room") {
+        chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
+      } else {
+        chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
+      }
+
     }
   })
 })

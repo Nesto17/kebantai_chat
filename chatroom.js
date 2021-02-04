@@ -9,6 +9,7 @@ chat_members_toggle.classList.add('chat_toggle')
 let menuToggle = document.querySelector('.navigation-toggle');
 let rightTab = document.querySelector('.right-header-tab');
 let darkBackground = document.querySelector('.dark-background');
+let darkBackground2 = document.querySelector('.dark-background-2');
 
 let headerLogo = document.querySelector('.header-logo');
 let leftTab = document.querySelector('.left-header-tab');
@@ -32,8 +33,7 @@ darkBackground.addEventListener('click', () => {
   headerLogo.classList.remove('active');
 
   rightTab.classList.remove('active');
-  roomslistTab.classList.remove('active');
-  membersTab.classList.remove('active');
+
 });
 
 menuToggle.addEventListener('click', () => {
@@ -69,12 +69,18 @@ let membersTab = document.querySelector('.members-tab')
 
 chat_others_toggle.addEventListener('click', () => {
   roomslistTab.classList.toggle('active');
-  darkBackground.classList.toggle('active');
+  darkBackground2.classList.toggle('active');
 });
 
 chat_members_toggle.addEventListener('click', () => {
   membersTab.classList.toggle('active');
-  darkBackground.classList.toggle('active');
+  darkBackground2.classList.toggle('active');
+});
+
+darkBackground2.addEventListener('click', () => {
+  roomslistTab.classList.remove('active');
+  membersTab.classList.remove('active');
+  darkBackground2.classList.remove('active');
 });
 
 const disabledWindow = document.querySelector('.disabled');

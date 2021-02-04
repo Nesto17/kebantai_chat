@@ -35,7 +35,8 @@ a {
   text-decoration: none;
 }
 
-.dark-background {
+.dark-background,
+.dark-background-2 {
   position: fixed;
   display: block;
   background: #000a14;
@@ -52,7 +53,12 @@ a {
   z-index: 49;
 }
 
-.dark-background.active {
+.dark-background-2 {
+  z-index: 69;
+}
+
+.dark-background.active,
+.dark-background-2.active {
   opacity: 0.7;
   pointer-events: unset;
 }
@@ -1169,7 +1175,7 @@ a {
     opacity: 1;
     pointer-events: unset;
 
-    z-index: 50;
+    z-index: 70;
   }
 
   .members-tab.active {
@@ -1177,7 +1183,7 @@ a {
     opacity: 1;
     pointer-events: unset;
 
-    z-index: 50;
+    z-index: 70;
   }
 }
 

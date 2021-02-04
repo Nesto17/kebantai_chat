@@ -86,7 +86,7 @@ a {
   font-size: 30px;
   cursor: pointer;
   transition: 0.3s ease-in-out;
-  z-index: 50;
+  /* z-index: 50; */
 }
 
 .header-logo:hover,
@@ -723,6 +723,7 @@ a {
 
 .pending-members {
   display: none;
+  position: relative;
 }
 
 .members-event-list {
@@ -760,6 +761,30 @@ a {
   border-radius: 50%;
   top: 8.5px;
   left: -20px;
+}
+
+.members-pending-disabled {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.members-pending-disabled .members-pending-disabled-icon img {
+  width: 80px;
+  height: 80px;
+}
+
+.members-pending-disabled-text {
+  text-align: center;
+  color: #76778b;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .members-pending-group {
@@ -1011,7 +1036,7 @@ a {
 
     display: grid;
     place-items: center;
-    z-index: 50;
+    /* z-index: 50; */
   }
 
   .navigation-toggle:hover {

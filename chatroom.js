@@ -9,6 +9,7 @@ chat_members_toggle.classList.add('chat_toggle')
 let menuToggle = document.querySelector('.navigation-toggle');
 let rightTab = document.querySelector('.right-header-tab');
 let darkBackground = document.querySelector('.dark-background');
+let darkBackground2 = document.querySelector('.dark-background-2');
 
 let headerLogo = document.querySelector('.header-logo');
 let leftTab = document.querySelector('.left-header-tab');
@@ -32,8 +33,7 @@ darkBackground.addEventListener('click', () => {
   headerLogo.classList.remove('active');
 
   rightTab.classList.remove('active');
-  roomslistTab.classList.remove('active');
-  membersTab.classList.remove('active');
+
 });
 
 menuToggle.addEventListener('click', () => {
@@ -69,12 +69,18 @@ let membersTab = document.querySelector('.members-tab')
 
 chat_others_toggle.addEventListener('click', () => {
   roomslistTab.classList.toggle('active');
-  darkBackground.classList.toggle('active');
+  darkBackground2.classList.toggle('active');
 });
 
 chat_members_toggle.addEventListener('click', () => {
   membersTab.classList.toggle('active');
-  darkBackground.classList.toggle('active');
+  darkBackground2.classList.toggle('active');
+});
+
+darkBackground2.addEventListener('click', () => {
+  roomslistTab.classList.remove('active');
+  membersTab.classList.remove('active');
+  darkBackground2.classList.remove('active');
 });
 
 const disabledWindow = document.querySelector('.disabled');
@@ -120,14 +126,27 @@ roomlist.forEach(room => {
 
       console.log(room.className.split(" ")[0]);
       let class_room = room.className.split(" ")[0];
+      // if (class_room == "basketball-room") {
+      //   chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
+      // } else if (class_room == "soccer-room") {
+      //   chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
+      // } else if (class_room == "badminton-room") {
+      //   chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
+      // } else {
+      //   chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
+      // }
       if (class_room == "basketball-room") {
-        chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
+        chat_title_html.style.background = "#fd8725";
+        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
       } else if (class_room == "soccer-room") {
-        chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
+        chat_title_html.style.background = "#51c759";
+        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
       } else if (class_room == "badminton-room") {
-        chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
+        chat_title_html.style.background = "#7600db";
+        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
       } else {
-        chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
+        chat_title_html.style.background = "#ff4778";
+        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
       }
 
     }

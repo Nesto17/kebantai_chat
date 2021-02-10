@@ -108,51 +108,6 @@ eventMembersSwitch.addEventListener('click', () => {
   }
 });
 
-// GET ROOM ID
-let room_id = "";
-let roomlist = document.querySelectorAll(".roomslist-room");
-roomlist.forEach(room => {
-  room.addEventListener("click", () => {
-    let input_id = room.querySelector("input").id;
-    if (room_id !== input_id) {
-      room_id = input_id;
-      console.log(room_id);
-
-      let chat_title_html = document.getElementById("chat_title");
-      let title_chat = document.getElementById("chat_title").querySelector("h4");
-      let label_room = room.querySelector("label");
-      let span_room = label_room.querySelector("span");
-      title_chat.innerHTML = span_room.innerHTML;
-
-      console.log(room.className.split(" ")[0]);
-      let class_room = room.className.split(" ")[0];
-      // if (class_room == "basketball-room") {
-      //   chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
-      // } else if (class_room == "soccer-room") {
-      //   chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
-      // } else if (class_room == "badminton-room") {
-      //   chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
-      // } else {
-      //   chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
-      // }
-      if (class_room == "basketball-room") {
-        chat_title_html.style.background = "#fd8725";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
-      } else if (class_room == "soccer-room") {
-        chat_title_html.style.background = "#51c759";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
-      } else if (class_room == "badminton-room") {
-        chat_title_html.style.background = "#7600db";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
-      } else {
-        chat_title_html.style.background = "#ff4778";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
-      }
-
-    }
-  })
-})
-
 /* 
 // CHATROOM 
 */
@@ -436,205 +391,175 @@ window.onload = function () {
     }
     // Refresh chat gets the message/chat data from firebase
     refresh_chat(room_id_new) {
-      var chat_content_container = document.getElementById('chat_content_container')
-
+      // room_id_new = "/chats_4";
+      if (room_id_new == undefined) {
+        room_id_new = "/chats_1";
+      }
       console.log(room_id_new)
 
-      // KODE TAMBAHAN
+      var chat_content_container = document.getElementById('chat_content_container')
 
-      for (let i = 0; i < 8; i++) {
-        if (i === 0) {
-          var name = "Joseph";
-          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
+      // Get the chats from firebase
+      db.ref('all_chats' + room_id_new).on('value', function (messages_object) {
+        // When we get the data clear chat_content_container
+        chat_content_container.innerHTML = ''
+        // if there are no messages in the chat. Retrun . Don't load anything
+        if (messages_object.numChildren() == 0) {
+          return
         }
 
-        if (i === 1) {
-          var name = "Theo";
-          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
+        // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
+        // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
+
+        // convert the message object values to an array.
+        var messages = Object.values(messages_object.val());
+        var guide = [] // this will be our guide to organizing the messages
+        var unordered = [] // unordered messages
+        var ordered = [] // we're going to order these messages
+
+        for (var i, i = 0; i < messages.length; i++) {
+          // The guide is simply an array from 0 to the messages.length
+          guide.push(i + 1)
+          // unordered is the [message, index_of_the_message]
+          unordered.push([messages[i], messages[i].index]);
         }
 
-        if (i === 2) {
-          var name = "Ernest";
-          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
-        }
+        // Now this is straight up from stack overflow 🤣
+        // Sort the unordered messages by the guide
+        guide.forEach(function (key) {
+          var found = false
+          unordered = unordered.filter(function (item) {
+            if (!found && item[1] == key) {
+              // Now push the ordered messages to ordered array
+              ordered.push(item[0])
+              found = true
+              return false
+            } else {
+              return true
+            }
+          })
+        })
 
-        if (i === 3) {
-          var name = "Joseph";
-          var message = "Ahahahahaahahaah LMAO XD";
-        }
+        // Now we're done. Simply display the ordered messages
+        ordered.forEach(function (data) {
+          var name = data.name
+          var message = data.message
 
-        if (i === 4) {
-          var name = "Theo";
-          var message = "wkwkwkkwkwkwkwkwkwk";
-        }
+          var message_container = document.createElement('div')
+          message_container.setAttribute('class', 'message_container')
 
-        if (i === 5) {
-          var name = "Ernest";
-          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy"
-        }
+          var message_inner_container = document.createElement('div')
+          message_inner_container.setAttribute('class', 'message_inner_container')
 
-        if (i === 6) {
-          var name = "Theo";
-          var message = "WKWKWKWKWKWKWKWWKWKWKWKWKWKWKWWKWKWKWKWKWWKW";
-        }
+          var message_user_container = document.createElement('div')
+          message_user_container.setAttribute('class', 'message_user_container')
 
-        if (i === 7) {
-          var name = "Joseph";
-          var message = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr";
-        }
+          var message_user = document.createElement('p')
+          message_user.setAttribute('class', 'message_user')
+          message_user.textContent = `${name}`
 
-        var message_container = document.createElement('div')
-        message_container.setAttribute('class', 'message_container')
+          var message_content_container = document.createElement('div')
+          message_content_container.setAttribute('class', 'message_content_container')
 
-        if (i === 2 || i === 5) {
-          message_container.classList.add('message_container_main')
-        }
+          var message_content = document.createElement('p')
+          message_content.setAttribute('class', 'message_content')
+          message_content.textContent = `${message}`
 
-        var message_inner_container = document.createElement('div')
-        message_inner_container.setAttribute('class', 'message_inner_container')
+          message_user_container.append(message_user)
+          message_content_container.append(message_content)
+          message_inner_container.append(message_user_container, message_content_container)
+          message_container.append(message_inner_container)
 
-        var message_user_container = document.createElement('div')
-        message_user_container.setAttribute('class', 'message_user_container')
-
-        var message_user = document.createElement('p')
-        message_user.setAttribute('class', 'message_user')
-        message_user.textContent = `${name}`
-
-        var message_content_container = document.createElement('div')
-        message_content_container.setAttribute('class', 'message_content_container')
-
-        var message_content = document.createElement('p')
-        message_content.setAttribute('class', 'message_content')
-        message_content.textContent = `${message}`
-
-        message_user_container.append(message_user)
-        message_content_container.append(message_content)
-        message_inner_container.append(message_user_container, message_content_container)
-        message_container.append(message_inner_container)
-
-        chat_content_container.append(message_container)
-      }
-
-      // Go to the recent message at the bottom of the container
-      chat_content_container.scrollTop = chat_content_container.scrollHeight;
-
-      //////////
+          chat_content_container.append(message_container)
+        });
+        // Go to the recent message at the bottom of the container
+        chat_content_container.scrollTop = chat_content_container.scrollHeight;
+      })
 
       /*
       // UNCOMMENT
       */
 
-      // Get the chats from firebase
+      // // Get the chats from firebase
       // db.ref('all_chats' + '/chats_1').on('value', function (messages_object) {
-      //     // When we get the data clear chat_content_container
-      //     chat_content_container.innerHTML = ''
-      //     // if there are no messages in the chat. Retrun . Don't load anything
-      //     if (messages_object.numChildren() == 0) {
-      //         return
-      //     }
+      //   // When we get the data clear chat_content_container
+      //   chat_content_container.innerHTML = ''
+      //   // if there are no messages in the chat. Retrun . Don't load anything
+      //   if (messages_object.numChildren() == 0) {
+      //     return
+      //   }
 
-      //     // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
-      //     // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
+      //   // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
+      //   // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
 
-      //     // convert the message object values to an array.
-      //     var messages = Object.values(messages_object.val());
-      //     var guide = [] // this will be our guide to organizing the messages
-      //     var unordered = [] // unordered messages
-      //     var ordered = [] // we're going to order these messages
+      //   // convert the message object values to an array.
+      //   var messages = Object.values(messages_object.val());
+      //   var guide = [] // this will be our guide to organizing the messages
+      //   var unordered = [] // unordered messages
+      //   var ordered = [] // we're going to order these messages
 
-      //     for (var i, i = 0; i < messages.length; i++) {
-      //         // The guide is simply an array from 0 to the messages.length
-      //         guide.push(i + 1)
-      //         // unordered is the [message, index_of_the_message]
-      //         unordered.push([messages[i], messages[i].index]);
-      //     }
+      //   for (var i, i = 0; i < messages.length; i++) {
+      //     // The guide is simply an array from 0 to the messages.length
+      //     guide.push(i + 1)
+      //     // unordered is the [message, index_of_the_message]
+      //     unordered.push([messages[i], messages[i].index]);
+      //   }
 
-      //     // Now this is straight up from stack overflow 🤣
-      //     // Sort the unordered messages by the guide
-      //     guide.forEach(function (key) {
-      //         var found = false
-      //         unordered = unordered.filter(function (item) {
-      //             if (!found && item[1] == key) {
-      //                 // Now push the ordered messages to ordered array
-      //                 ordered.push(item[0])
-      //                 found = true
-      //                 return false
-      //             } else {
-      //                 return true
-      //             }
-      //         })
+      //   // Now this is straight up from stack overflow 🤣
+      //   // Sort the unordered messages by the guide
+      //   guide.forEach(function (key) {
+      //     var found = false
+      //     unordered = unordered.filter(function (item) {
+      //       if (!found && item[1] == key) {
+      //         // Now push the ordered messages to ordered array
+      //         ordered.push(item[0])
+      //         found = true
+      //         return false
+      //       } else {
+      //         return true
+      //       }
       //     })
+      //   })
 
-      //     // Now we're done. Simply display the ordered messages
-      //     // ordered.forEach(function (data) {
-      //     //     var name = data.name
-      //     //     var message = data.message
+      //   // Now we're done. Simply display the ordered messages
+      //   ordered.forEach(function (data) {
+      //     var name = data.name
+      //     var message = data.message
 
-      //     //     var message_container = document.createElement('div')
-      //     //     message_container.setAttribute('class', 'message_container')
+      //     var message_container = document.createElement('div')
+      //     message_container.setAttribute('class', 'message_container')
 
-      //     //     var message_inner_container = document.createElement('div')
-      //     //     message_inner_container.setAttribute('class', 'message_inner_container')
+      //     var message_inner_container = document.createElement('div')
+      //     message_inner_container.setAttribute('class', 'message_inner_container')
 
-      //     //     var message_user_container = document.createElement('div')
-      //     //     message_user_container.setAttribute('class', 'message_user_container')
+      //     var message_user_container = document.createElement('div')
+      //     message_user_container.setAttribute('class', 'message_user_container')
 
-      //     //     var message_user = document.createElement('p')
-      //     //     message_user.setAttribute('class', 'message_user')
-      //     //     message_user.textContent = `${name}`
+      //     var message_user = document.createElement('p')
+      //     message_user.setAttribute('class', 'message_user')
+      //     message_user.textContent = `${name}`
 
-      //     //     var message_content_container = document.createElement('div')
-      //     //     message_content_container.setAttribute('class', 'message_content_container')
+      //     var message_content_container = document.createElement('div')
+      //     message_content_container.setAttribute('class', 'message_content_container')
 
-      //     //     var message_content = document.createElement('p')
-      //     //     message_content.setAttribute('class', 'message_content')
-      //     //     message_content.textContent = `${message}`
+      //     var message_content = document.createElement('p')
+      //     message_content.setAttribute('class', 'message_content')
+      //     message_content.textContent = `${message}`
 
-      //     //     message_user_container.append(message_user)
-      //     //     message_content_container.append(message_content)
-      //     //     message_inner_container.append(message_user_container, message_content_container)
-      //     //     message_container.append(message_inner_container)
+      //     message_user_container.append(message_user)
+      //     message_content_container.append(message_content)
+      //     message_inner_container.append(message_user_container, message_content_container)
+      //     message_container.append(message_inner_container)
 
-      //     //     chat_content_container.append(message_container)
-      //     // });
+      //     chat_content_container.append(message_container)
+      //   });
 
-      //     for (let i = 0; i < 3; i++) {
-      //         var name = "Joseph";
-      //         var message = "Hello";
-
-      //         var message_container = document.createElement('div')
-      //         message_container.setAttribute('class', 'message_container')
-
-      //         var message_inner_container = document.createElement('div')
-      //         message_inner_container.setAttribute('class', 'message_inner_container')
-
-      //         var message_user_container = document.createElement('div')
-      //         message_user_container.setAttribute('class', 'message_user_container')
-
-      //         var message_user = document.createElement('p')
-      //         message_user.setAttribute('class', 'message_user')
-      //         message_user.textContent = `${name}`
-
-      //         var message_content_container = document.createElement('div')
-      //         message_content_container.setAttribute('class', 'message_content_container')
-
-      //         var message_content = document.createElement('p')
-      //         message_content.setAttribute('class', 'message_content')
-      //         message_content.textContent = `${message}`
-
-      //         message_user_container.append(message_user)
-      //         message_content_container.append(message_content)
-      //         message_inner_container.append(message_user_container, message_content_container)
-      //         message_container.append(message_inner_container)
-
-      //         chat_content_container.append(message_container)
-      //     }
-
-      //     // Go to the recent message at the bottom of the container
-      //     chat_content_container.scrollTop = chat_content_container.scrollHeight;
+      //   // Go to the recent message at the bottom of the container
+      //   chat_content_container.scrollTop = chat_content_container.scrollHeight;
       // })
     }
   }
+
   // So we've "built" our app. Let's make it work!!
   var app = new MEME_CHAT()
   // If we have a name stored in localStorage.
@@ -643,6 +568,44 @@ window.onload = function () {
   if (app.get_name() != null) {
     app.chat()
   }
+
+  // GET ROOM ID
+  let room_id = "";
+  let roomlist = document.querySelectorAll(".roomslist-room");
+  roomlist.forEach(room => {
+    room.addEventListener("click", () => {
+      let input_id = room.querySelector("input").id;
+      if (room_id !== input_id) {
+        room_id = input_id;
+        console.log(room_id);
+        app.refresh_chat(room_id);
+
+        // GANTI TITLE CHATNYA
+        let chat_title_html = document.getElementById("chat_title");
+        let title_chat = document.getElementById("chat_title").querySelector("h4");
+        let label_room = room.querySelector("label");
+        let span_room = label_room.querySelector("span");
+        title_chat.innerHTML = span_room.innerHTML;
+
+        // GANTI WARNA TITLE CHATNYA
+        console.log(room.className.split(" ")[0]);
+        let class_room = room.className.split(" ")[0];
+        if (class_room == "basketball-room") {
+          chat_title_html.style.background = "#fd8725";
+          chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
+        } else if (class_room == "soccer-room") {
+          chat_title_html.style.background = "#51c759";
+          chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
+        } else if (class_room == "badminton-room") {
+          chat_title_html.style.background = "#7600db";
+          chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
+        } else {
+          chat_title_html.style.background = "#ff4778";
+          chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+        }
+      }
+    })
+  })
 
   // app.refresh_chat("hello");
 

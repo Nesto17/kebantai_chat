@@ -229,7 +229,7 @@ body{
     transition: background-color 0.5s;
     color: #fff;
     background-color: #D64045; /*#5B7553;*/
-    cursor: pointer;
+    cursor: pointer;  
   }
   #title_container.chat_title_container{
     transition: 0.8s;

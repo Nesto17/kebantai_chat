@@ -403,7 +403,7 @@ a {
 }
 
 .deleted-room label::before {
-  background: linear-gradient(to top left, #ff3b3b, #cb0000);
+  background: linear-gradient(to top left, #ff0202, #ff4b15);
 }
 
 .basketball-room input:checked + label,
@@ -609,6 +609,66 @@ a {
 
 .message_container_main .message_content {
   background: #464874;
+}
+
+.announcement-box {
+  display: none;
+}
+
+.chatroom.deleted .announcement-box {
+  display: unset;
+  position: relative;
+  background: #ff2727;
+  border-radius: 10px;
+  padding: 15px 30px;
+  min-height: 130px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.chatroom.deleted .announcement-box::before {
+  content: "";
+  position: absolute;
+  background: url('./images/exclamation.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 150px;
+  height: 130px;
+  left: -10px;
+  bottom: -5px;
+
+  z-index: 1;
+}
+
+.announcement-title {
+  font-size: 18px;
+  font-weight: 600;
+  display: block;
+
+  z-index: 2;
+}
+
+.announcement-desc {
+  font-size: 11px;
+  margin-top: 10px;
+  color: #FFD6D6;
+  text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
+  display: block;
+
+  z-index: 2;
+}
+
+.announcement-subtitle {
+  display: inline; 
+  font-weight: 500;
+}
+
+.announcement-reason {
+  display: inline;
+  font-weight: 300;
 }
 
 .members-tab {
@@ -1291,6 +1351,15 @@ a {
   #chat_content_container {
     padding: 10px 10px 10px 0px;
   }
+
+  .chatroom.deleted .announcement-box {
+    min-height: 170px;
+  }
+
+  .chatroom.deleted .announcement-box::before {
+    width: 150px;
+    height: 150px;
+  }
 }
 
 @media (max-width: 415px) {
@@ -1354,6 +1423,9 @@ a {
   #chat_container {
     width: 310px;
   }
+
+  .chatroom.deleted .announcement-box {
+    min-height: 220px;
 
   .edge-tab.active {
     width: 250px;

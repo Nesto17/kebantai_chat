@@ -111,6 +111,7 @@ eventMembersSwitch.addEventListener('click', () => {
 // GET ROOM ID
 let room_id = "";
 let roomlist = document.querySelectorAll(".roomslist-room");
+
 roomlist.forEach(room => {
   room.addEventListener("click", () => {
     let input_id = room.querySelector("input").id;
@@ -124,7 +125,7 @@ roomlist.forEach(room => {
       let span_room = label_room.querySelector("span");
       title_chat.innerHTML = span_room.innerHTML;
 
-      console.log(room.className.split(" ")[0]);
+      // console.log(room.className.split(" ")[0]);
       let class_room = room.className.split(" ")[0];
       // if (class_room == "basketball-room") {
       //   chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
@@ -144,14 +145,24 @@ roomlist.forEach(room => {
       } else if (class_room == "badminton-room") {
         chat_title_html.style.background = "#7600db";
         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
-      } else {
+      } else if (class_room == "volleyball-room") {
         chat_title_html.style.background = "#ff4778";
         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+      } else {
+        chat_title_html.style.background = "#ff0202";
+        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(252, 59, 59, 0.5)";
+      }
+
+      if (class_room == "deleted-room") {
+        chatroom.classList.add('deleted');
+      } else {
+        chatroom.classList.remove('deleted');
       }
 
     }
   })
 })
+
 
 /* 
 // CHATROOM 
@@ -438,6 +449,26 @@ window.onload = function () {
     refresh_chat(room_id_new) {
       var chat_content_container = document.getElementById('chat_content_container')
 
+      var announcementBox = document.createElement('div')
+      var announcementTitle = document.createElement('h4')
+      var announcementDesc = document.createElement('div');
+      var announcementSubtitle = document.createElement('span')
+      var announcementReason = document.createElement('p');
+
+      announcementBox.append(announcementTitle, announcementDesc);
+      announcementDesc.append(announcementSubtitle, announcementReason);
+      announcementBox.setAttribute('class', 'announcement-box');
+      announcementTitle.setAttribute('class', 'announcement-title');
+      announcementDesc.setAttribute('class', 'announcement-desc');
+      announcementSubtitle.setAttribute('class', 'announcement-subtitle');
+      announcementReason.setAttribute('class', 'announcement-reason');
+
+      announcementTitle.innerHTML = "Ernest has cancelled the event";
+      announcementSubtitle.innerHTML = "The owner's reason:  ";
+      announcementReason.innerHTML = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu."
+
+      chat_content_container.append(announcementBox)
+      
       console.log(room_id_new)
 
       // KODE TAMBAHAN

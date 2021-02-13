@@ -632,7 +632,7 @@ a {
 .chatroom.deleted .announcement-box::before {
   content: "";
   position: absolute;
-  background: url('./images/exclamation.svg');
+  background: url("./images/exclamation.svg");
   background-size: contain;
   background-repeat: no-repeat;
   width: 150px;
@@ -654,7 +654,7 @@ a {
 .announcement-desc {
   font-size: 11px;
   margin-top: 10px;
-  color: #FFD6D6;
+  color: #ffd6d6;
   text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
   display: block;
 
@@ -662,7 +662,7 @@ a {
 }
 
 .announcement-subtitle {
-  display: inline; 
+  display: inline;
   font-weight: 500;
 }
 
@@ -838,13 +838,14 @@ a {
 .members-pending-disabled .members-pending-disabled-icon img {
   width: 80px;
   height: 80px;
+  opacity: 0.4;
 }
 
 .members-pending-disabled-text {
   text-align: center;
   color: #76778b;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .members-pending-group {
@@ -1426,6 +1427,7 @@ a {
 
   .chatroom.deleted .announcement-box {
     min-height: 220px;
+  }
 
   .edge-tab.active {
     width: 250px;

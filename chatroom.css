@@ -551,6 +551,7 @@ a {
 }
 
 #chat_input_send i {
+  cursor: pointer;
   color: #76778b;
   transition: 0.4s;
 }

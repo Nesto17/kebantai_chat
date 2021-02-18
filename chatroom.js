@@ -108,61 +108,6 @@ eventMembersSwitch.addEventListener('click', () => {
   }
 });
 
-// GET ROOM ID
-// let room_id = "/chats_1";
-// let roomlist = document.querySelectorAll(".roomslist-room");
-
-// roomlist.forEach(room => {
-//   room.addEventListener("click", () => {
-//     let input_id = room.querySelector("input").id;
-//     if (room_id !== input_id) {
-//       room_id = input_id;
-//       console.log(room_id);
-
-//       let chat_title_html = document.getElementById("chat_title");
-//       let title_chat = document.getElementById("chat_title").querySelector("h4");
-//       let label_room = room.querySelector("label");
-//       let span_room = label_room.querySelector("span");
-//       title_chat.innerHTML = span_room.innerHTML;
-
-//       // console.log(room.className.split(" ")[0]);
-//       let class_room = room.className.split(" ")[0];
-//       // if (class_room == "basketball-room") {
-//       //   chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
-//       // } else if (class_room == "soccer-room") {
-//       //   chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
-//       // } else if (class_room == "badminton-room") {
-//       //   chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
-//       // } else {
-//       //   chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
-//       // }
-//       if (class_room == "basketball-room") {
-//         chat_title_html.style.background = "#fd8725";
-//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
-//       } else if (class_room == "soccer-room") {
-//         chat_title_html.style.background = "#51c759";
-//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
-//       } else if (class_room == "badminton-room") {
-//         chat_title_html.style.background = "#7600db";
-//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
-//       } else if (class_room == "volleyball-room") {
-//         chat_title_html.style.background = "#ff4778";
-//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
-//       } else {
-//         chat_title_html.style.background = "#ff0202";
-//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(252, 59, 59, 0.5)";
-//       }
-
-//       if (class_room == "deleted-room") {
-//         chatroom.classList.add('deleted');
-//       } else {
-//         chatroom.classList.remove('deleted');
-//       }
-
-//     }
-//   })
-// })
-
 /* 
 // CHATROOM 
 */
@@ -416,12 +361,6 @@ window.onload = function () {
       /*
       // PUSH DATA KE REALTIME DATABASE
       */
-
-      // if (room_id_new == undefined) {
-      //   room_id_new = "/chats_1";
-      // }
-      // console.log(room_id_new)
-
       let room_id_new_2 = room_id + "/"
 
       if (message != null) {
@@ -559,88 +498,6 @@ window.onload = function () {
         // Go to the recent message at the bottom of the container
         chat_content_container.scrollTop = chat_content_container.scrollHeight;
       })
-
-      /*
-      // UNCOMMENT
-      */
-
-      // // Get the chats from firebase
-      // db.ref('all_chats' + '/chats_1').on('value', function (messages_object) {
-      //   // When we get the data clear chat_content_container
-      //   chat_content_container.innerHTML = ''
-      //   // if there are no messages in the chat. Retrun . Don't load anything
-      //   if (messages_object.numChildren() == 0) {
-      //     return
-      //   }
-
-      //   // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
-      //   // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
-
-      //   // convert the message object values to an array.
-      //   var messages = Object.values(messages_object.val());
-      //   var guide = [] // this will be our guide to organizing the messages
-      //   var unordered = [] // unordered messages
-      //   var ordered = [] // we're going to order these messages
-
-      //   for (var i, i = 0; i < messages.length; i++) {
-      //     // The guide is simply an array from 0 to the messages.length
-      //     guide.push(i + 1)
-      //     // unordered is the [message, index_of_the_message]
-      //     unordered.push([messages[i], messages[i].index]);
-      //   }
-
-      //   // Now this is straight up from stack overflow 🤣
-      //   // Sort the unordered messages by the guide
-      //   guide.forEach(function (key) {
-      //     var found = false
-      //     unordered = unordered.filter(function (item) {
-      //       if (!found && item[1] == key) {
-      //         // Now push the ordered messages to ordered array
-      //         ordered.push(item[0])
-      //         found = true
-      //         return false
-      //       } else {
-      //         return true
-      //       }
-      //     })
-      //   })
-
-      //   // Now we're done. Simply display the ordered messages
-      //   ordered.forEach(function (data) {
-      //     var name = data.name
-      //     var message = data.message
-
-      //     var message_container = document.createElement('div')
-      //     message_container.setAttribute('class', 'message_container')
-
-      //     var message_inner_container = document.createElement('div')
-      //     message_inner_container.setAttribute('class', 'message_inner_container')
-
-      //     var message_user_container = document.createElement('div')
-      //     message_user_container.setAttribute('class', 'message_user_container')
-
-      //     var message_user = document.createElement('p')
-      //     message_user.setAttribute('class', 'message_user')
-      //     message_user.textContent = `${name}`
-
-      //     var message_content_container = document.createElement('div')
-      //     message_content_container.setAttribute('class', 'message_content_container')
-
-      //     var message_content = document.createElement('p')
-      //     message_content.setAttribute('class', 'message_content')
-      //     message_content.textContent = `${message}`
-
-      //     message_user_container.append(message_user)
-      //     message_content_container.append(message_content)
-      //     message_inner_container.append(message_user_container, message_content_container)
-      //     message_container.append(message_inner_container)
-
-      //     chat_content_container.append(message_container)
-      //   });
-
-      //   // Go to the recent message at the bottom of the container
-      //   chat_content_container.scrollTop = chat_content_container.scrollHeight;
-      // })
     }
   }
 
@@ -693,29 +550,11 @@ window.onload = function () {
     })
   })
 
-  // app.refresh_chat("hello");
-
-  // db.ref('all_chats' + '/chats_1').once('value', function (message_object) {
-  //     // This index is mortant. It will help organize the chat in order
-  //     var index = parseFloat(message_object.numChildren()) + 1;
-  //     // db.ref('all_chats' + '/chats_1/' + `message_${index}`).set({
-  //     //     name: "joseph",
-  //     //     message: "hello",
-  //     //     index: index
-  //     // })
-  //     // alert(index);
-  //     // db.ref('all_chats' + '/chats_1' + `message_${index}`).set({
-  //     //         name: parent.get_name(),
-  //     //         message: message,
-  //     //         index: index
-  //     //     })
-  //     //     .then(function () {
-  //     //         // After we send the chat refresh to get the new messages
-  //     //         parent.refresh_chat()
-  //     //     })
-  // })
-
 }
 
 // let otherRooms_toggle = document.getElementById('chat_others_toggle');
 // let members_toggle = document.querySelector('#chat_members_toggle');
+
+/*
+// MEMBERS
+*/

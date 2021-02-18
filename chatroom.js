@@ -109,59 +109,59 @@ eventMembersSwitch.addEventListener('click', () => {
 });
 
 // GET ROOM ID
-let room_id = "";
-let roomlist = document.querySelectorAll(".roomslist-room");
+// let room_id = "/chats_1";
+// let roomlist = document.querySelectorAll(".roomslist-room");
 
-roomlist.forEach(room => {
-  room.addEventListener("click", () => {
-    let input_id = room.querySelector("input").id;
-    if (room_id !== input_id) {
-      room_id = input_id;
-      console.log(room_id);
+// roomlist.forEach(room => {
+//   room.addEventListener("click", () => {
+//     let input_id = room.querySelector("input").id;
+//     if (room_id !== input_id) {
+//       room_id = input_id;
+//       console.log(room_id);
 
-      let chat_title_html = document.getElementById("chat_title");
-      let title_chat = document.getElementById("chat_title").querySelector("h4");
-      let label_room = room.querySelector("label");
-      let span_room = label_room.querySelector("span");
-      title_chat.innerHTML = span_room.innerHTML;
+//       let chat_title_html = document.getElementById("chat_title");
+//       let title_chat = document.getElementById("chat_title").querySelector("h4");
+//       let label_room = room.querySelector("label");
+//       let span_room = label_room.querySelector("span");
+//       title_chat.innerHTML = span_room.innerHTML;
 
-      // console.log(room.className.split(" ")[0]);
-      let class_room = room.className.split(" ")[0];
-      // if (class_room == "basketball-room") {
-      //   chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
-      // } else if (class_room == "soccer-room") {
-      //   chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
-      // } else if (class_room == "badminton-room") {
-      //   chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
-      // } else {
-      //   chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
-      // }
-      if (class_room == "basketball-room") {
-        chat_title_html.style.background = "#fd8725";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
-      } else if (class_room == "soccer-room") {
-        chat_title_html.style.background = "#51c759";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
-      } else if (class_room == "badminton-room") {
-        chat_title_html.style.background = "#7600db";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
-      } else if (class_room == "volleyball-room") {
-        chat_title_html.style.background = "#ff4778";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
-      } else {
-        chat_title_html.style.background = "#ff0202";
-        chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(252, 59, 59, 0.5)";
-      }
+//       // console.log(room.className.split(" ")[0]);
+//       let class_room = room.className.split(" ")[0];
+//       // if (class_room == "basketball-room") {
+//       //   chat_title_html.style.background = "linear-gradient(90deg, #febc2f, #fd8725)";
+//       // } else if (class_room == "soccer-room") {
+//       //   chat_title_html.style.background = "linear-gradient(to top left, #4caa53, #b7ffcd)";
+//       // } else if (class_room == "badminton-room") {
+//       //   chat_title_html.style.background = "linear-gradient(to top left, #ff93ea, #7600db)";
+//       // } else {
+//       //   chat_title_html.style.background = "linear-gradient(to top left, #cc2351, #ffa3ae)";
+//       // }
+//       if (class_room == "basketball-room") {
+//         chat_title_html.style.background = "#fd8725";
+//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
+//       } else if (class_room == "soccer-room") {
+//         chat_title_html.style.background = "#51c759";
+//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
+//       } else if (class_room == "badminton-room") {
+//         chat_title_html.style.background = "#7600db";
+//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
+//       } else if (class_room == "volleyball-room") {
+//         chat_title_html.style.background = "#ff4778";
+//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+//       } else {
+//         chat_title_html.style.background = "#ff0202";
+//         chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(252, 59, 59, 0.5)";
+//       }
 
-      if (class_room == "deleted-room") {
-        chatroom.classList.add('deleted');
-      } else {
-        chatroom.classList.remove('deleted');
-      }
+//       if (class_room == "deleted-room") {
+//         chatroom.classList.add('deleted');
+//       } else {
+//         chatroom.classList.remove('deleted');
+//       }
 
-    }
-  })
-})
+//     }
+//   })
+// })
 
 /* 
 // CHATROOM 
@@ -417,21 +417,29 @@ window.onload = function () {
       // PUSH DATA KE REALTIME DATABASE
       */
 
-      // Get the firebase database value
-      db.ref('all_chats' + '/chats_1').once('value', function (message_object) {
-        // This index is mortant. It will help organize the chat in order
-        var index = parseFloat(message_object.numChildren()) + 1
-        db.ref('all_chats' + '/chats_1/' + `message_${index}`).set({
-            name: parent.get_name(),
-            message: message,
-            index: index
-          })
-          .then(function () {
-            // After we send the chat refresh to get the new messages
-            parent.refresh_chat()
-          })
-      })
+      // if (room_id_new == undefined) {
+      //   room_id_new = "/chats_1";
+      // }
+      // console.log(room_id_new)
 
+      let room_id_new_2 = room_id + "/"
+
+      if (message != null) {
+        // Get the firebase database value
+        db.ref('all_chats' + room_id).once('value', function (message_object) {
+          // This index is mortant. It will help organize the chat in order
+          var index = parseFloat(message_object.numChildren()) + 1
+          db.ref('all_chats' + room_id_new_2 + `message_${index}`).set({
+              name: parent.get_name(),
+              message: message,
+              index: index
+            })
+            .then(function () {
+              // After we send the chat refresh to get the new messages
+              parent.refresh_chat(room_id)
+            })
+        })
+      }
       /*-------------------------------------------------------*/
     }
     // Get name. Gets the username from localStorage
@@ -467,8 +475,7 @@ window.onload = function () {
       announcementReason.innerHTML = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu."
 
       chat_content_container.append(announcementBox)
-      
-      // room_id_new = "/chats_4";
+
       if (room_id_new == undefined) {
         room_id_new = "/chats_1";
       }
@@ -647,8 +654,9 @@ window.onload = function () {
   }
 
   // GET ROOM ID
-  let room_id = "";
+  let room_id = "/chats_1";
   let roomlist = document.querySelectorAll(".roomslist-room");
+
   roomlist.forEach(room => {
     room.addEventListener("click", () => {
       let input_id = room.querySelector("input").id;
@@ -656,6 +664,7 @@ window.onload = function () {
         room_id = input_id;
         console.log(room_id);
         app.refresh_chat(room_id);
+        // app.send_message(null, room_id);
 
         // GANTI TITLE CHATNYA
         let chat_title_html = document.getElementById("chat_title");

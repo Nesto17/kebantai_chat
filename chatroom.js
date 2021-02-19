@@ -64,29 +64,6 @@
     darkBackground.classList.add('active');
   });
 
-  // REQUEST APPLICATION
-  let acceptButton = document.querySelectorAll('.accept-button');
-  let rejectButton = document.querySelectorAll('.reject-button');
-  let pendingMembers = document.querySelectorAll('.members-pending-group');
-  let requestApplication = document.querySelector('.request-application');
-  let applicationClose = document.querySelector('.application-close')
-
-  for (let i = 0; i < acceptButton.length; i++) {
-    acceptButton[i].addEventListener('click', () => {
-      requestApplication.style.display = "unset";
-    });
-  }
-
-  for (let i = 0; i < rejectButton.length; i++) {
-    rejectButton[i].addEventListener('click', () => {
-      pendingMembers[i].style.display = "none"
-    });
-  }
-
-  applicationClose.addEventListener('click', () => {
-    requestApplication.style.display = "none";
-  });
-
   let roomslistTab = document.querySelector('.roomslist-tab');
   let membersTab = document.querySelector('.members-tab')
 
@@ -574,6 +551,30 @@
       // GET ROOM ID
       let roomlist = document.querySelectorAll(".roomslist-room");
 
+      // REQUEST APPLICATION
+      let acceptButton = document.querySelectorAll('.accept-button');
+      let rejectButton = document.querySelectorAll('.reject-button');
+      let pendingMembers = document.querySelectorAll('.members-pending-group');
+      let requestApplication = document.querySelector('.request-application');
+      let applicationClose = document.querySelector('.application-close')
+
+      for (let i = 0; i < acceptButton.length; i++) {
+        acceptButton[i].addEventListener('click', () => {
+          requestApplication.style.display = "unset";
+        });
+      }
+
+      for (let i = 0; i < rejectButton.length; i++) {
+        rejectButton[i].addEventListener('click', () => {
+          pendingMembers[i].style.display = "none"
+        });
+      }
+
+      applicationClose.addEventListener('click', () => {
+        requestApplication.style.display = "none";
+      });
+
+      // ROOM
       roomlist.forEach(room => {
         room.addEventListener("click", (e) => {
           e.preventDefault();
@@ -598,8 +599,23 @@
               if (doc.exists) {
                 let member = [doc.data().owner];
                 member = member.concat(doc.data().matches_join);
-
                 renderMember(member);
+
+                if (doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
+                  var child = pending_members.lastElementChild;
+                  while (child) {
+                    pending_members.removeChild(child);
+                    child = pending_members.lastElementChild;
+                  }
+                  renderPending(doc.data().pending);
+                } else {
+                  var child = pending_members.lastElementChild;
+                  while (child) {
+                    pending_members.removeChild(child);
+                    child = pending_members.lastElementChild;
+                  }
+                  renderPendingDisabled();
+                }
               }
             })
 
@@ -635,8 +651,12 @@
   // let members_toggle = document.querySelector('#chat_members_toggle');
 
   /*
-  // MEMBERS
+  // MEMBERS AND PENDING
   */
+
+  let form_room = document.querySelector(".roomslist");
+  let event_members = document.querySelector(".event-members");
+  let pending_members = document.querySelector('.pending-members');
 
   dbf.collection('account').doc("MXd9rXgzZOvPLldbcyCY").get().then(function (doc) {
     let matches_join_created = doc.data().matches_created_join;
@@ -647,9 +667,6 @@
       })
     })
   })
-
-  let form_room = document.querySelector(".roomslist");
-  let event_members = document.querySelector(".event-members");
 
   function renderRoom(data, id) {
     // CREATE DIV
@@ -716,4 +733,85 @@
     // APPEND TO EVENT_MEMBERS
     p.appendChild(span);
     event_members.appendChild(p);
+  }
+
+  function renderPending(pending) {
+    dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
+      snapshot.docs.forEach(document => {
+        renderPending2(document.data());
+      })
+    })
+  }
+
+  function renderPending2(data) {
+    // CREATE DIV WRAPPER
+    let div = document.createElement('div');
+    div.className = "members-pending-group";
+
+    // CREATE P TAG
+    let p = document.createElement('p');
+
+    if (data.sex == "male") {
+      p.className = "members-event-list male";
+    } else {
+      p.className = "members-event-list female";
+    }
+
+    p.innerHTML = data.username;
+
+    // CREATE SPAN
+    let span = document.createElement('span');
+    span.className = "members-age";
+    span.innerHTML = ', ' + data.age;
+
+    // CREATE DIV BUTTON
+    let div_button = document.createElement('div');
+    div_button.className = "buttons";
+
+    // CREATE ACCEPT BUTTON
+    let accept_button = document.createElement('div');
+    accept_button.className = "accept-button";
+    let img_accept = document.createElement('img');
+    img_accept.src = "./images/accept-button.svg";
+
+    // CREATE REJECT BUTTON
+    let reject_button = document.createElement('div');
+    reject_button.className = "reject-button";
+    let img_reject = document.createElement('img');
+    img_reject.src = "./images/reject-button.svg";
+
+    // APPEND TO PENDING_MEMBERS
+    reject_button.appendChild(img_reject);
+    accept_button.appendChild(img_accept);
+    div_button.appendChild(accept_button);
+    div_button.appendChild(reject_button);
+    p.appendChild(span);
+    div.appendChild(p);
+    div.appendChild(div_button);
+    pending_members.appendChild(div);
+
+  }
+
+  function renderPendingDisabled() {
+    // CREATE DIV WRAP
+    let div = document.createElement('div');
+    div.className = "members-pending-disabled";
+
+    // CREATE DIV ICON
+    let div_icon = document.createElement('div');
+    div_icon.className = "members-pending-disabled-icon";
+
+    let img = document.createElement('img');
+    img.src = "./images/notallowed.svg";
+
+    // CREATE P TAG
+    let p = document.createElement('p');
+    p.className = "members-pending-disabled-text";
+    p.innerHTML = "Only the owner can access this tab...";
+
+    // APPEND TO PENDING MEMBERS
+    div_icon.appendChild(img);
+    div.appendChild(div_icon);
+    div.appendChild(p);
+    pending_members.appendChild(div);
   }

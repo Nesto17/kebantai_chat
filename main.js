@@ -1,5 +1,119 @@
-// We enclose this in window.onload.
-// So we don't have ridiculous errors.
+var chat_others_toggle = document.createElement('div')
+chat_others_toggle.setAttribute('id', 'chat_others_toggle')
+chat_others_toggle.classList.add('chat_toggle')
+
+var chat_members_toggle = document.createElement('div')
+chat_members_toggle.setAttribute('id', 'chat_members_toggle')
+chat_members_toggle.classList.add('chat_toggle')
+
+let menuToggle = document.querySelector('.navigation-toggle');
+let rightTab = document.querySelector('.right-header-tab');
+let darkBackground = document.querySelector('.dark-background');
+let darkBackground2 = document.querySelector('.dark-background-2');
+
+let headerLogo = document.querySelector('.header-logo');
+let leftTab = document.querySelector('.left-header-tab');
+
+headerLogo.addEventListener('click', () => {
+    if (leftTab.classList.contains('active')) {
+        leftTab.classList.remove('active');
+        darkBackground.classList.remove('active');
+        headerLogo.classList.remove('active');
+        rightTab.classList.remove('active');
+    } else {
+        leftTab.classList.add('active');
+        darkBackground.classList.add('active');
+        headerLogo.classList.add('active');
+    }
+});
+
+darkBackground.addEventListener('click', () => {
+    leftTab.classList.remove('active');
+    darkBackground.classList.remove('active');
+    headerLogo.classList.remove('active');
+
+    rightTab.classList.remove('active');
+
+});
+
+menuToggle.addEventListener('click', () => {
+    rightTab.classList.add('active');
+    darkBackground.classList.add('active');
+});
+
+// REQUEST APPLICATION
+let acceptButton = document.querySelectorAll('.accept-button');
+let rejectButton = document.querySelectorAll('.reject-button');
+let pendingMembers = document.querySelectorAll('.members-pending-group');
+let requestApplication = document.querySelector('.request-application');
+let applicationClose = document.querySelector('.application-close')
+
+for (let i = 0; i < acceptButton.length; i++) {
+    acceptButton[i].addEventListener('click', () => {
+        requestApplication.style.display = "unset";
+    });
+}
+
+for (let i = 0; i < rejectButton.length; i++) {
+    rejectButton[i].addEventListener('click', () => {
+        pendingMembers[i].style.display = "none"
+    });
+}
+
+applicationClose.addEventListener('click', () => {
+    requestApplication.style.display = "none";
+});
+
+let roomslistTab = document.querySelector('.roomslist-tab');
+let membersTab = document.querySelector('.members-tab')
+
+chat_others_toggle.addEventListener('click', () => {
+    roomslistTab.classList.toggle('active');
+    darkBackground2.classList.toggle('active');
+});
+
+chat_members_toggle.addEventListener('click', () => {
+    membersTab.classList.toggle('active');
+    darkBackground2.classList.toggle('active');
+});
+
+darkBackground2.addEventListener('click', () => {
+    roomslistTab.classList.remove('active');
+    membersTab.classList.remove('active');
+    darkBackground2.classList.remove('active');
+});
+
+const disabledWindow = document.querySelector('.disabled');
+const eventMembersSwitch = document.querySelector('.members-event-switch');
+const pendingMembersSwitch = document.querySelector('.members-pending-switch');
+const eventMembersWindow = document.querySelector('.event-members');
+const pendingMembersWindow = document.querySelector('.pending-members');
+
+pendingMembersSwitch.addEventListener('click', () => {
+    if (pendingMembersSwitch.classList.contains("disabled")) {
+        pendingMembersSwitch.classList.remove("disabled");
+        eventMembersSwitch.classList.add("disabled");
+        eventMembersWindow.style.display = "none";
+        pendingMembersWindow.style.display = "unset";
+    }
+});
+
+
+eventMembersSwitch.addEventListener('click', () => {
+    if (eventMembersSwitch.classList.contains("disabled")) {
+        eventMembersSwitch.classList.remove("disabled");
+        pendingMembersSwitch.classList.add("disabled");
+        pendingMembersWindow.style.display = "none";
+        eventMembersWindow.style.display = "unset";
+    }
+});
+
+/* 
+// CHATROOM 
+*/
+
+let chatroom = document.querySelector(".chatroom");
+
 window.onload = function () {
 
     // Your web app's Firebase configuration
@@ -20,6 +134,7 @@ window.onload = function () {
     // This is very IMPORTANT!! We're going to use "db" a lot.
     var db = firebase.database()
 
+
     // We're going to use oBjEcT OrIeNtEd PrOgRaMmInG. Lol
     class MEME_CHAT {
         // Home() is used to create the home page
@@ -27,29 +142,11 @@ window.onload = function () {
             // First clear the body before adding in
             // a title and the join form
             document.body.innerHTML = ''
-            this.create_title()
             this.create_join_form()
         }
         // chat() is used to create the chat page
         chat() {
-            this.create_title()
             this.create_chat()
-        }
-        // create_title() is used to create the title
-        create_title() {
-            // This is the title creator. 🎉
-            var title_container = document.createElement('div')
-            title_container.setAttribute('id', 'title_container')
-            var title_inner_container = document.createElement('div')
-            title_inner_container.setAttribute('id', 'title_inner_container')
-
-            var title = document.createElement('h1')
-            title.setAttribute('id', 'title')
-            title.textContent = 'Kebantai Chat'
-
-            title_inner_container.append(title)
-            title_container.append(title_inner_container)
-            document.body.append(title_container)
         }
         // create_join_form() creates the join form
         create_join_form() {
@@ -145,17 +242,31 @@ window.onload = function () {
             // Again! You need to have (parent = this)
             var parent = this;
             // GET THAT MEMECHAT HEADER OUTTA HERE
-            var title_container = document.getElementById('title_container')
-            var title = document.getElementById('title')
-            title_container.classList.add('chat_title_container')
-            // Make the title smaller by making it 'chat_title'
-            title.classList.add('chat_title')
 
             var chat_container = document.createElement('div')
             chat_container.setAttribute('id', 'chat_container')
 
             var chat_inner_container = document.createElement('div')
             chat_inner_container.setAttribute('id', 'chat_inner_container')
+
+            // TAMBAHAN
+
+            var chat_title = document.createElement('div');
+            var chat_title_h2 = document.createElement('h4');
+            chat_title.setAttribute('id', 'chat_title')
+            chat_title_h2.innerHTML = 'Latihan Basket';
+
+            var chat_others_text = document.createElement('p')
+            var chat_others_logo = document.createElement('span')
+            var chat_members_text = document.createElement('p')
+            var chat_members_logo = document.createElement('span')
+
+            chat_others_text.innerHTML = 'Other Rooms'
+            chat_members_text.innerHTML = 'Members'
+
+            chat_title.append(chat_others_toggle, chat_title_h2, chat_members_toggle)
+            chat_others_toggle.append(chat_others_logo, chat_others_text)
+            chat_members_toggle.append(chat_members_logo, chat_members_text)
 
             var chat_content_container = document.createElement('div')
             chat_content_container.setAttribute('id', 'chat_content_container')
@@ -180,8 +291,8 @@ window.onload = function () {
             /*-----------------------------------------*/
 
             // Get the name of the user
-            chat_input.placeholder = `${parent.get_name()}. Say something...`
-            // chat_input.placeholder = 'Enter a message';
+            // chat_input.placeholder = `${parent.get_name()}. Say something...`
+            chat_input.placeholder = 'Enter your messages';
             chat_input.onkeyup = function () {
                 if (chat_input.value.length > 0) {
                     chat_input_send.removeAttribute('disabled')
@@ -223,9 +334,9 @@ window.onload = function () {
             // chat_logout_container.append(chat_logout)
 
             chat_input_container.append(chat_input, chat_input_send)
-            chat_inner_container.append(chat_content_container, chat_input_container)
+            chat_inner_container.append(chat_title, chat_content_container, chat_input_container)
             chat_container.append(chat_inner_container)
-            document.body.append(chat_container)
+            chatroom.append(chat_container)
             // After creating the chat. We immediatly create a loading circle in the 'chat_content_container'
             parent.create_load('chat_content_container')
             // then we "refresh" and get the chat data from Firebase
@@ -250,22 +361,24 @@ window.onload = function () {
             /*
             // PUSH DATA KE REALTIME DATABASE
             */
+            let room_id_new_2 = room_id + "/"
 
-            // Get the firebase database value
-            db.ref('all_chats' + '/chats_1').once('value', function (message_object) {
-                // This index is mortant. It will help organize the chat in order
-                var index = parseFloat(message_object.numChildren()) + 1
-                db.ref('all_chats' + '/chats_1/' + `message_${index}`).set({
-                        name: parent.get_name(),
-                        message: message,
-                        index: index
-                    })
-                    .then(function () {
-                        // After we send the chat refresh to get the new messages
-                        parent.refresh_chat()
-                    })
-            })
-
+            if (message != null) {
+                // Get the firebase database value
+                db.ref('all_chats' + room_id).once('value', function (message_object) {
+                    // This index is mortant. It will help organize the chat in order
+                    var index = parseFloat(message_object.numChildren()) + 1
+                    db.ref('all_chats' + room_id_new_2 + `message_${index}`).set({
+                            name: parent.get_name(),
+                            message: message,
+                            index: index
+                        })
+                        .then(function () {
+                            // After we send the chat refresh to get the new messages
+                            parent.refresh_chat(room_id)
+                        })
+                })
+            }
             /*-------------------------------------------------------*/
         }
         // Get name. Gets the username from localStorage
@@ -279,163 +392,115 @@ window.onload = function () {
             }
         }
         // Refresh chat gets the message/chat data from firebase
-        refresh_chat() {
+        refresh_chat(room_id_new) {
             var chat_content_container = document.getElementById('chat_content_container')
 
-            // KODE TAMBAHAN
+            var announcementBox = document.createElement('div')
+            var announcementTitle = document.createElement('h4')
+            var announcementDesc = document.createElement('div');
+            var announcementSubtitle = document.createElement('span')
+            var announcementReason = document.createElement('p');
 
-            for (let i = 0; i < 3; i++) {
-                var name = "Joseph";
-                var message = "Hello";
+            announcementBox.append(announcementTitle, announcementDesc);
+            announcementDesc.append(announcementSubtitle, announcementReason);
+            announcementBox.setAttribute('class', 'announcement-box');
+            announcementTitle.setAttribute('class', 'announcement-title');
+            announcementDesc.setAttribute('class', 'announcement-desc');
+            announcementSubtitle.setAttribute('class', 'announcement-subtitle');
+            announcementReason.setAttribute('class', 'announcement-reason');
 
-                var message_container = document.createElement('div')
-                message_container.setAttribute('class', 'message_container')
+            announcementTitle.innerHTML = "Ernest has cancelled the event";
+            announcementSubtitle.innerHTML = "The owner's reason:  ";
+            announcementReason.innerHTML = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu."
 
-                var message_inner_container = document.createElement('div')
-                message_inner_container.setAttribute('class', 'message_inner_container')
+            chat_content_container.append(announcementBox)
 
-                var message_user_container = document.createElement('div')
-                message_user_container.setAttribute('class', 'message_user_container')
-
-                var message_user = document.createElement('p')
-                message_user.setAttribute('class', 'message_user')
-                message_user.textContent = `${name}`
-
-                var message_content_container = document.createElement('div')
-                message_content_container.setAttribute('class', 'message_content_container')
-
-                var message_content = document.createElement('p')
-                message_content.setAttribute('class', 'message_content')
-                message_content.textContent = `${message}`
-
-                message_user_container.append(message_user)
-                message_content_container.append(message_content)
-                message_inner_container.append(message_user_container, message_content_container)
-                message_container.append(message_inner_container)
-
-                chat_content_container.append(message_container)
+            if (room_id_new == undefined) {
+                room_id_new = "/chats_1";
             }
+            console.log(room_id_new)
 
-            // Go to the recent message at the bottom of the container
-            chat_content_container.scrollTop = chat_content_container.scrollHeight;
-
-            //////////
-
-            /*
-            // UNCOMMENT
-            */
+            var chat_content_container = document.getElementById('chat_content_container')
 
             // Get the chats from firebase
-            // db.ref('all_chats' + '/chats_1').on('value', function (messages_object) {
-            //     // When we get the data clear chat_content_container
-            //     chat_content_container.innerHTML = ''
-            //     // if there are no messages in the chat. Retrun . Don't load anything
-            //     if (messages_object.numChildren() == 0) {
-            //         return
-            //     }
+            db.ref('all_chats' + room_id_new).on('value', function (messages_object) {
+                // When we get the data clear chat_content_container
+                chat_content_container.innerHTML = ''
+                // if there are no messages in the chat. Retrun . Don't load anything
+                if (messages_object.numChildren() == 0) {
+                    return
+                }
 
-            //     // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
-            //     // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
+                // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
+                // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
 
-            //     // convert the message object values to an array.
-            //     var messages = Object.values(messages_object.val());
-            //     var guide = [] // this will be our guide to organizing the messages
-            //     var unordered = [] // unordered messages
-            //     var ordered = [] // we're going to order these messages
+                // convert the message object values to an array.
+                var messages = Object.values(messages_object.val());
+                var guide = [] // this will be our guide to organizing the messages
+                var unordered = [] // unordered messages
+                var ordered = [] // we're going to order these messages
 
-            //     for (var i, i = 0; i < messages.length; i++) {
-            //         // The guide is simply an array from 0 to the messages.length
-            //         guide.push(i + 1)
-            //         // unordered is the [message, index_of_the_message]
-            //         unordered.push([messages[i], messages[i].index]);
-            //     }
+                for (var i, i = 0; i < messages.length; i++) {
+                    // The guide is simply an array from 0 to the messages.length
+                    guide.push(i + 1)
+                    // unordered is the [message, index_of_the_message]
+                    unordered.push([messages[i], messages[i].index]);
+                }
 
-            //     // Now this is straight up from stack overflow 🤣
-            //     // Sort the unordered messages by the guide
-            //     guide.forEach(function (key) {
-            //         var found = false
-            //         unordered = unordered.filter(function (item) {
-            //             if (!found && item[1] == key) {
-            //                 // Now push the ordered messages to ordered array
-            //                 ordered.push(item[0])
-            //                 found = true
-            //                 return false
-            //             } else {
-            //                 return true
-            //             }
-            //         })
-            //     })
+                // Now this is straight up from stack overflow 🤣
+                // Sort the unordered messages by the guide
+                guide.forEach(function (key) {
+                    var found = false
+                    unordered = unordered.filter(function (item) {
+                        if (!found && item[1] == key) {
+                            // Now push the ordered messages to ordered array
+                            ordered.push(item[0])
+                            found = true
+                            return false
+                        } else {
+                            return true
+                        }
+                    })
+                })
 
-            //     // Now we're done. Simply display the ordered messages
-            //     // ordered.forEach(function (data) {
-            //     //     var name = data.name
-            //     //     var message = data.message
+                // Now we're done. Simply display the ordered messages
+                ordered.forEach(function (data) {
+                    var name = data.name
+                    var message = data.message
 
-            //     //     var message_container = document.createElement('div')
-            //     //     message_container.setAttribute('class', 'message_container')
+                    var message_container = document.createElement('div')
+                    message_container.setAttribute('class', 'message_container')
 
-            //     //     var message_inner_container = document.createElement('div')
-            //     //     message_inner_container.setAttribute('class', 'message_inner_container')
+                    var message_inner_container = document.createElement('div')
+                    message_inner_container.setAttribute('class', 'message_inner_container')
 
-            //     //     var message_user_container = document.createElement('div')
-            //     //     message_user_container.setAttribute('class', 'message_user_container')
+                    var message_user_container = document.createElement('div')
+                    message_user_container.setAttribute('class', 'message_user_container')
 
-            //     //     var message_user = document.createElement('p')
-            //     //     message_user.setAttribute('class', 'message_user')
-            //     //     message_user.textContent = `${name}`
+                    var message_user = document.createElement('p')
+                    message_user.setAttribute('class', 'message_user')
+                    message_user.textContent = `${name}`
 
-            //     //     var message_content_container = document.createElement('div')
-            //     //     message_content_container.setAttribute('class', 'message_content_container')
+                    var message_content_container = document.createElement('div')
+                    message_content_container.setAttribute('class', 'message_content_container')
 
-            //     //     var message_content = document.createElement('p')
-            //     //     message_content.setAttribute('class', 'message_content')
-            //     //     message_content.textContent = `${message}`
+                    var message_content = document.createElement('p')
+                    message_content.setAttribute('class', 'message_content')
+                    message_content.textContent = `${message}`
 
-            //     //     message_user_container.append(message_user)
-            //     //     message_content_container.append(message_content)
-            //     //     message_inner_container.append(message_user_container, message_content_container)
-            //     //     message_container.append(message_inner_container)
+                    message_user_container.append(message_user)
+                    message_content_container.append(message_content)
+                    message_inner_container.append(message_user_container, message_content_container)
+                    message_container.append(message_inner_container)
 
-            //     //     chat_content_container.append(message_container)
-            //     // });
-
-            //     for (let i = 0; i < 3; i++) {
-            //         var name = "Joseph";
-            //         var message = "Hello";
-
-            //         var message_container = document.createElement('div')
-            //         message_container.setAttribute('class', 'message_container')
-
-            //         var message_inner_container = document.createElement('div')
-            //         message_inner_container.setAttribute('class', 'message_inner_container')
-
-            //         var message_user_container = document.createElement('div')
-            //         message_user_container.setAttribute('class', 'message_user_container')
-
-            //         var message_user = document.createElement('p')
-            //         message_user.setAttribute('class', 'message_user')
-            //         message_user.textContent = `${name}`
-
-            //         var message_content_container = document.createElement('div')
-            //         message_content_container.setAttribute('class', 'message_content_container')
-
-            //         var message_content = document.createElement('p')
-            //         message_content.setAttribute('class', 'message_content')
-            //         message_content.textContent = `${message}`
-
-            //         message_user_container.append(message_user)
-            //         message_content_container.append(message_content)
-            //         message_inner_container.append(message_user_container, message_content_container)
-            //         message_container.append(message_inner_container)
-
-            //         chat_content_container.append(message_container)
-            //     }
-
-            //     // Go to the recent message at the bottom of the container
-            //     chat_content_container.scrollTop = chat_content_container.scrollHeight;
-            // })
+                    chat_content_container.append(message_container)
+                });
+                // Go to the recent message at the bottom of the container
+                chat_content_container.scrollTop = chat_content_container.scrollHeight;
+            })
         }
     }
+
     // So we've "built" our app. Let's make it work!!
     var app = new MEME_CHAT()
     // If we have a name stored in localStorage.
@@ -445,24 +510,47 @@ window.onload = function () {
         app.chat()
     }
 
-    // db.ref('all_chats' + '/chats_1').once('value', function (message_object) {
-    //     // This index is mortant. It will help organize the chat in order
-    //     var index = parseFloat(message_object.numChildren()) + 1;
-    //     // db.ref('all_chats' + '/chats_1/' + `message_${index}`).set({
-    //     //     name: "joseph",
-    //     //     message: "hello",
-    //     //     index: index
-    //     // })
-    //     // alert(index);
-    //     // db.ref('all_chats' + '/chats_1' + `message_${index}`).set({
-    //     //         name: parent.get_name(),
-    //     //         message: message,
-    //     //         index: index
-    //     //     })
-    //     //     .then(function () {
-    //     //         // After we send the chat refresh to get the new messages
-    //     //         parent.refresh_chat()
-    //     //     })
-    // })
+    // GET ROOM ID
+    let room_id = "/chats_1";
+    let roomlist = document.querySelectorAll(".roomslist-room");
+
+    roomlist.forEach(room => {
+        room.addEventListener("click", () => {
+            let input_id = room.querySelector("input").id;
+            if (room_id !== input_id) {
+                room_id = input_id;
+                console.log(room_id);
+                app.refresh_chat(room_id);
+                // app.send_message(null, room_id);
+
+                // GANTI TITLE CHATNYA
+                let chat_title_html = document.getElementById("chat_title");
+                let title_chat = document.getElementById("chat_title").querySelector("h4");
+                let label_room = room.querySelector("label");
+                let span_room = label_room.querySelector("span");
+                title_chat.innerHTML = span_room.innerHTML;
+
+                // GANTI WARNA TITLE CHATNYA
+                console.log(room.className.split(" ")[0]);
+                let class_room = room.className.split(" ")[0];
+                if (class_room == "basketball-room") {
+                    chat_title_html.style.background = "#fd8725";
+                    chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
+                } else if (class_room == "soccer-room") {
+                    chat_title_html.style.background = "#51c759";
+                    chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
+                } else if (class_room == "badminton-room") {
+                    chat_title_html.style.background = "#7600db";
+                    chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
+                } else {
+                    chat_title_html.style.background = "#ff4778";
+                    chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+                }
+            }
+        })
+    })
 
 }
+
+// let otherRooms_toggle = document.getElementById('chat_others_toggle');
+// let members_toggle = document.querySelector('#chat_members_toggle');

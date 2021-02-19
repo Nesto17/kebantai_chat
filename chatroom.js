@@ -601,6 +601,10 @@
                 member = member.concat(doc.data().matches_join);
                 renderMember(member);
 
+                // AMOUNT OF MEMBERS
+                let total_member = 1 + doc.data().matches_join.length;
+                members_amount.innerHTML = total_member + ' / ' + doc.data().limit;
+
                 if (doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
                   var child = pending_members.lastElementChild;
                   while (child) {
@@ -657,6 +661,7 @@
   let form_room = document.querySelector(".roomslist");
   let event_members = document.querySelector(".event-members");
   let pending_members = document.querySelector('.pending-members');
+  let members_amount = document.querySelector('.members-amount');
 
   dbf.collection('account').doc("MXd9rXgzZOvPLldbcyCY").get().then(function (doc) {
     let matches_join_created = doc.data().matches_created_join;

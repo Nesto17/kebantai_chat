@@ -913,8 +913,10 @@
     })
   }
 
-  loadContent();
-  loadChat();
+  // LOAD CONTENT AND CHAT
+
+  // loadContent();
+  // loadChat();
 
 
   /*

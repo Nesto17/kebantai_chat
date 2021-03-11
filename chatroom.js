@@ -83,38 +83,369 @@
     darkBackground2.classList.remove('active');
   });
 
-  const disabledWindow = document.querySelector('.disabled');
-  const eventMembersSwitch = document.querySelector('.members-event-switch');
-  const pendingMembersSwitch = document.querySelector('.members-pending-switch');
-  const eventMembersWindow = document.querySelector('.event-members');
-  const pendingMembersWindow = document.querySelector('.pending-members');
+  // let otherRooms_toggle = document.getElementById('chat_others_toggle');
+  // let members_toggle = document.querySelector('#chat_members_toggle');
 
-  pendingMembersSwitch.addEventListener('click', () => {
-    if (pendingMembersSwitch.classList.contains("disabled")) {
-      pendingMembersSwitch.classList.remove("disabled");
-      eventMembersSwitch.classList.add("disabled");
-      eventMembersWindow.style.display = "none";
-      pendingMembersWindow.style.display = "unset";
-    }
-  });
-
-
-  eventMembersSwitch.addEventListener('click', () => {
-    if (eventMembersSwitch.classList.contains("disabled")) {
-      eventMembersSwitch.classList.remove("disabled");
-      pendingMembersSwitch.classList.add("disabled");
-      pendingMembersWindow.style.display = "none";
-      eventMembersWindow.style.display = "unset";
-    }
-  });
-
-  /* 
-  // CHATROOM 
+  /*
+  // MEMBERS AND PENDING
   */
 
-  let chatroom = document.querySelector(".chatroom");
+  let form_room = document.querySelector(".roomslist");
+  let event_members = document.querySelector(".event-members");
+  let pending_members = document.querySelector('.pending-members');
+  let members_amount = document.querySelector('.members-amount');
 
-  window.onload = function () {
+  dbf.collection('account').doc("MXd9rXgzZOvPLldbcyCY").get().then(function (doc) {
+    let matches_join_created = doc.data().matches_created_join;
+
+    dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), 'in', matches_join_created).get().then((snapshot) => {
+      snapshot.docs.forEach(dok => {
+        renderRoom(dok.data(), dok.id);
+      })
+    })
+  })
+
+  function renderRoom(data, id) {
+    // CREATE DIV
+    let roomslist_room = document.createElement('div');
+
+    if (data.sport == "basketball") {
+      roomslist_room.className = "basketball-room roomslist-room";
+    } else if (data.sport == "soccer") {
+      roomslist_room.className = "soccer-room roomslist-room";
+    } else if (data.sport == "badminton") {
+      roomslist_room.className = "badminton-room roomslist-room";
+    } else if (data.sport == "volleyball") {
+      roomslist_room.className = "volleyball-room roomslist-room";
+    }
+
+    // CREATE INPUT
+    let input = document.createElement('input');
+    input.setAttribute("type", "radio");
+    input.setAttribute("name", "room");
+    input.className = "room-radio";
+    let id_input = "/" + id;
+    input.id = id_input;
+
+    // CREATE LABEL
+    let label = document.createElement("label");
+    label.setAttribute("for", id_input);
+
+    // CREATE SPAN
+    let span = document.createElement('span');
+    span.innerHTML = data.event_name;
+
+    // APPEND TO FORM
+    label.appendChild(span);
+    roomslist_room.appendChild(input);
+    roomslist_room.appendChild(label);
+    form_room.appendChild(roomslist_room);
+  }
+
+  function renderMember(member) {
+    dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', member).get().then((snapshot) => {
+      snapshot.docs.forEach(document => {
+        renderMember2(document.data());
+      })
+    })
+  }
+
+  function renderMember2(data) {
+    // CREATE P TAG
+    let p = document.createElement('p');
+
+    if (data.sex == "male") {
+      p.className = "members-event-list male";
+    } else {
+      p.className = "members-event-list female";
+    }
+
+    p.innerHTML = data.username;
+
+    // CREATE SPAN
+    let span = document.createElement('span');
+    span.className = "members-age";
+    span.innerHTML = ', ' + data.age;
+
+    // APPEND TO EVENT_MEMBERS
+    p.appendChild(span);
+    event_members.appendChild(p);
+  }
+
+  function renderPending(pending) {
+    dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
+      snapshot.docs.forEach(document => {
+        renderPending2(document.data());
+      })
+    })
+  }
+
+  function renderPending2(data) {
+    // CREATE DIV WRAPPER
+    let div = document.createElement('div');
+    div.className = "members-pending-group";
+
+    // CREATE P TAG
+    let p = document.createElement('p');
+
+    if (data.sex == "male") {
+      p.className = "members-event-list male";
+    } else {
+      p.className = "members-event-list female";
+    }
+
+    p.innerHTML = data.username;
+
+    // CREATE SPAN
+    let span = document.createElement('span');
+    span.className = "members-age";
+    span.innerHTML = ', ' + data.age;
+
+    // CREATE DIV BUTTON
+    let div_button = document.createElement('div');
+    div_button.className = "buttons";
+
+    // CREATE ACCEPT BUTTON
+    let accept_button = document.createElement('div');
+    accept_button.className = "accept-button";
+    let img_accept = document.createElement('img');
+    img_accept.src = "./images/accept-button.svg";
+
+    // CREATE REJECT BUTTON
+    let reject_button = document.createElement('div');
+    reject_button.className = "reject-button";
+    let img_reject = document.createElement('img');
+    img_reject.src = "./images/reject-button.svg";
+
+    // APPEND TO PENDING_MEMBERS
+    reject_button.appendChild(img_reject);
+    accept_button.appendChild(img_accept);
+    div_button.appendChild(accept_button);
+    div_button.appendChild(reject_button);
+    p.appendChild(span);
+    div.appendChild(p);
+    div.appendChild(div_button);
+    pending_members.appendChild(div);
+
+  }
+
+  function renderPendingDisabled() {
+    // CREATE DIV WRAP
+    let div = document.createElement('div');
+    div.className = "members-pending-disabled";
+
+    // CREATE DIV ICON
+    let div_icon = document.createElement('div');
+    div_icon.className = "members-pending-disabled-icon";
+
+    let img = document.createElement('img');
+    img.src = "./images/notallowed.svg";
+
+    // CREATE P TAG
+    let p = document.createElement('p');
+    p.className = "members-pending-disabled-text";
+    p.innerHTML = "Only the owner can access this tab...";
+
+    // APPEND TO PENDING MEMBERS
+    div_icon.appendChild(img);
+    div.appendChild(div_icon);
+    div.appendChild(p);
+    pending_members.appendChild(div);
+  }
+
+  /* 
+  // CONTENT AND CHATROOM 
+  */
+  let div_wrapper = document.querySelector('.wrapper');
+
+  function loadContent() {
+    // CREATE DIV CONTENT
+    let div_content = document.createElement('div');
+    div_content.className = "content";
+
+    /*-------------------------------------------------*/
+
+    // CREATE SECTION roomslist-tab edge-tab
+    let section_roomlist_tab = document.createElement('section');
+    section_roomlist_tab.className = "roomslist-tab edge-tab";
+
+    // CREATE DIV ROOMLIST-TITLE
+    let div_roomlist_title = document.createElement('div');
+    div_roomlist_title.className = "roomslist-title";
+
+    let span_div_roomlist_title = document.createElement('span');
+    span_div_roomlist_title.className = "roomslist-logo";
+
+    let img_span_roomlist = document.createElement('img');
+    img_span_roomlist.src = "./images/Header images/chatroom.svg";
+
+    let h3_div_roomlist = document.createElement('h3');
+    h3_div_roomlist.innerHTML = "Chatrooms";
+
+    span_div_roomlist_title.appendChild(img_span_roomlist);
+    div_roomlist_title.appendChild(span_div_roomlist_title);
+    div_roomlist_title.appendChild(h3_div_roomlist);
+
+    // CREATE FORM ROOMLIST
+    let form_roomlist = document.createElement('form');
+    form_roomlist.className = "roomslist";
+
+    // CREATE ROOM 1
+    let div_basketball_room = document.createElement('div');
+    div_basketball_room.className = "basketball-room roomslist-room";
+
+    let input_basket = document.createElement('input');
+    input_basket.setAttribute('type', 'radio');
+    input_basket.setAttribute('name', 'room');
+    input_basket.className = "room-radio";
+    input_basket.id = "/chats_1";
+    input_basket.checked = true;
+
+    let label_basket = document.createElement('label');
+    label_basket.setAttribute('for', "/chats_1");
+    let span_basket = document.createElement('span');
+    span_basket.innerHTML = 'Latihan Basket';
+
+    label_basket.appendChild(span_basket);
+    div_basketball_room.appendChild(input_basket);
+    div_basketball_room.appendChild(label_basket);
+
+    // CREATE ROOM 2
+    let div_soccer_room = document.createElement('div');
+    div_soccer_room.className = "soccer-room roomslist-room";
+
+    let input_soccer = document.createElement('input');
+    input_soccer.setAttribute('type', 'radio');
+    input_soccer.setAttribute('name', 'room');
+    input_soccer.className = "room-radio";
+    input_soccer.id = "/chats_2";
+
+    let label_soccer = document.createElement('label');
+    label_soccer.setAttribute('for', "/chats_2");
+    let span_soccer = document.createElement('span');
+    span_soccer.innerHTML = 'Latihan Futsal';
+
+    label_soccer.appendChild(span_soccer);
+    div_soccer_room.appendChild(input_soccer);
+    div_soccer_room.appendChild(label_soccer);
+
+    form_roomlist.appendChild(div_basketball_room);
+    form_roomlist.appendChild(div_soccer_room);
+
+    section_roomlist_tab.appendChild(div_roomlist_title);
+    section_roomlist_tab.appendChild(form_roomlist);
+
+    /*-------------------------------------------------*/
+
+    // CREATE SECTION CHATROOM
+    let section_chatroom = document.createElement('section');
+    section_chatroom.className = "chatroom";
+
+    /*-------------------------------------------------*/
+
+    // CREATE SECTION members-tab edge-tab
+    let section_members_tab = document.createElement('section');
+    section_members_tab.className = "members-tab edge-tab";
+
+    // CREATE DIV MEMBERS TITLE
+    let div_members_title = document.createElement('div');
+    div_members_title.className = "members-title";
+
+    let h3_members_title = document.createElement('h3');
+    h3_members_title.innerHTML = "Members";
+
+    let span_members_amount = document.createElement('span');
+    span_members_amount.className = "members-amount";
+    span_members_amount.innerHTML = "04 / 10";
+
+    let span_roomslist_logo = document.createElement('span');
+    span_roomslist_logo.className = "roomslist-logo";
+
+    let img_roomlist_logo = document.createElement('img');
+    img_roomlist_logo.src = "./images/Header images/profile.svg";
+
+    span_roomslist_logo.appendChild(img_roomlist_logo);
+    h3_members_title.appendChild(span_members_amount);
+    div_members_title.appendChild(h3_members_title);
+    div_members_title.appendChild(span_roomslist_logo);
+
+    // CREATE DIV MEMBER SWITCH
+    let div_member_switch = document.createElement('div');
+    div_member_switch.className = "members-switch";
+
+    let div_members_event_switch = document.createElement('div');
+    div_members_event_switch.className = "members-event-switch";
+    div_members_event_switch.innerHTML = "MEMBERS";
+
+    let div_members_pending_switch = document.createElement('div');
+    div_members_pending_switch.className = "members-pending-switch disabled";
+    div_members_pending_switch.innerHTML = "PENDING";
+
+    div_member_switch.appendChild(div_members_event_switch);
+    div_member_switch.appendChild(div_members_pending_switch);
+
+    // CREATE DIV MEMBERS
+    let div_members = document.createElement("div");
+    div_members.className = "members";
+
+    let div_event_members = document.createElement("div");
+    div_event_members.className = "event-members";
+
+    let div_pending_members = document.createElement("div");
+    div_pending_members.className = "pending-members";
+
+    div_members.appendChild(div_event_members);
+    div_members.appendChild(div_pending_members);
+
+    section_members_tab.appendChild(div_members_title);
+    section_members_tab.appendChild(div_member_switch);
+    section_members_tab.appendChild(div_members);
+
+    /*-------------------------------------------------*/
+
+    // CREATE DIV REQUEST APPLICATION
+    let div_request_application = document.createElement('div');
+    div_request_application.className = "request-application";
+
+    let div_application_box = document.createElement('div');
+    div_application_box.className = "application-box";
+
+    let div_application_close = document.createElement('div');
+    div_application_close.className = "application-close";
+    div_application_close.innerHTML = "+";
+
+    let h4_application_title = document.createElement('h4');
+    h4_application_title.className = "application-title";
+    h4_application_title.innerHTML = "Request Application";
+
+    let span_application_title = document.createElement('span');
+    span_application_title.innerHTML = "Name's ";
+
+    let div_application_text = document.createElement('div');
+    div_application_text.className = "application-text";
+    div_application_text.innerHTML = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in. Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit vel nobis itaque velit dignissimos facere!";
+
+    let div_application_acccept = document.createElement('div');
+    div_application_acccept.className = "application-accept";
+    div_application_acccept.innerHTML = "ACCEPT";
+
+    h4_application_title.appendChild(span_application_title);
+    div_application_box.appendChild(div_application_close);
+    div_application_box.appendChild(h4_application_title);
+    div_application_box.appendChild(div_application_text);
+    div_application_box.appendChild(div_application_acccept);
+
+    /*-------------------------------------------------*/
+
+    div_content.appendChild(section_roomlist_tab);
+    div_content.appendChild(section_chatroom);
+    div_content.appendChild(section_members_tab);
+    div_content.appendChild(div_request_application);
+
+    div_wrapper.appendChild(div_content);
+  }
+
+  function loadChat() {
     var firebaseConfig = {
       apiKey: "AIzaSyCVQiH2DSjYOiRrsmgaSRTObEWkGpHm1sA",
       authDomain: "kebantai2020.firebaseapp.com",
@@ -128,6 +459,8 @@
 
     // This is very IMPORTANT!! We're going to use "db" a lot.
     var db = firebase.database()
+
+    let chatroom = document.querySelector(".chatroom");
 
     // We're going to use oBjEcT OrIeNtEd PrOgRaMmInG. Lol
     class MEME_CHAT {
@@ -150,61 +483,6 @@
         parent.save_name("lol");
         parent.create_chat();
 
-        // var join_container = document.createElement('div')
-        // join_container.setAttribute('id', 'join_container')
-        // var join_inner_container = document.createElement('div')
-        // join_inner_container.setAttribute('id', 'join_inner_container')
-
-        // var join_button_container = document.createElement('div')
-        // join_button_container.setAttribute('id', 'join_button_container')
-
-        // var join_button = document.createElement('button')
-        // join_button.setAttribute('id', 'join_button')
-        // join_button.innerHTML = 'Join <i class="fas fa-sign-in-alt"></i>'
-
-        // var join_input_container = document.createElement('div')
-        // join_input_container.setAttribute('id', 'join_input_container')
-
-        // var join_input = document.createElement('input')
-        // join_input.setAttribute('id', 'join_input')
-        // join_input.setAttribute('maxlength', 15)
-        // join_input.placeholder = 'Please Enter Your Name:'
-        // // Every time we type into the join_input
-
-        // join_input.onkeyup = function () {
-        //     // If the input we have is longer that 0 letters
-        //     if (join_input.value.length > 0) {
-        //         // Make the button light up
-        //         join_button.classList.add('enabled')
-        //         // Allow the user to click the button
-        //         join_button.onclick = function () {
-        //             // Save the name to local storage. Passing in
-        //             // the join_input.value
-        //             parent.save_name(join_input.value)
-        //             // Remove the join_container. So the site doesn't look weird.
-        //             join_container.remove()
-        //             // parent = this. But it is not the join_button
-        //             // It is (MEME_CHAT = this).
-
-        //             /*
-        //             // CREATE CHATNYA
-        //             */
-        //             parent.create_chat()
-        //             /*-------------------------*/
-        //         }
-        //     } else {
-        //         // If the join_input is empty then turn off the
-        //         // join button
-        //         join_button.classList.remove('enabled')
-        //     }
-        // }
-
-        // // Append everything to the body
-        // join_button_container.append(join_button)
-        // join_input_container.append(join_input)
-        // join_inner_container.append(join_input_container, join_button_container)
-        // join_container.append(join_inner_container)
-        // document.body.append(join_container)
       }
       // create_load() creates a loading circle that is used in the chat container
       create_load(container_id) {
@@ -310,22 +588,6 @@
             chat_input_send.classList.remove('enabled')
           }
         }
-
-        // LOGOUT
-
-        // var chat_logout_container = document.createElement('div')
-        // chat_logout_container.setAttribute('id', 'chat_logout_container')
-
-        // var chat_logout = document.createElement('button')
-        // chat_logout.setAttribute('id', 'chat_logout')
-        // chat_logout.textContent = `${parent.get_name()} • logout`
-        // // "Logout" is really just deleting the name from the localStorage
-        // chat_logout.onclick = function () {
-        //     localStorage.clear()
-        //     // Go back to home page
-        //     parent.home()
-        // }
-        // chat_logout_container.append(chat_logout)
 
         chat_input_container.append(chat_input, chat_input_send)
         chat_inner_container.append(chat_title, chat_content_container, chat_input_container)
@@ -601,6 +863,10 @@
                 member = member.concat(doc.data().matches_join);
                 renderMember(member);
 
+                // AMOUNT OF MEMBERS
+                let total_member = 1 + doc.data().matches_join.length;
+                members_amount.innerHTML = total_member + ' / ' + doc.data().limit;
+
                 if (doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
                   var child = pending_members.lastElementChild;
                   while (child) {
@@ -647,171 +913,36 @@
     })
   }
 
-  // let otherRooms_toggle = document.getElementById('chat_others_toggle');
-  // let members_toggle = document.querySelector('#chat_members_toggle');
+  // LOAD CONTENT AND CHAT
+
+  // loadContent();
+  // loadChat();
+
 
   /*
-  // MEMBERS AND PENDING
+  // PENDING AND MEMBER SWITCH  
   */
 
-  let form_room = document.querySelector(".roomslist");
-  let event_members = document.querySelector(".event-members");
-  let pending_members = document.querySelector('.pending-members');
+  const disabledWindow = document.querySelector('.disabled');
+  const eventMembersSwitch = document.querySelector('.members-event-switch');
+  const pendingMembersSwitch = document.querySelector('.members-pending-switch');
+  const eventMembersWindow = document.querySelector('.event-members');
+  const pendingMembersWindow = document.querySelector('.pending-members');
 
-  dbf.collection('account').doc("MXd9rXgzZOvPLldbcyCY").get().then(function (doc) {
-    let matches_join_created = doc.data().matches_created_join;
-
-    dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), 'in', matches_join_created).get().then((snapshot) => {
-      snapshot.docs.forEach(dok => {
-        renderRoom(dok.data(), dok.id);
-      })
-    })
-  })
-
-  function renderRoom(data, id) {
-    // CREATE DIV
-    let roomslist_room = document.createElement('div');
-
-    if (data.sport == "basketball") {
-      roomslist_room.className = "basketball-room roomslist-room";
-    } else if (data.sport == "soccer") {
-      roomslist_room.className = "soccer-room roomslist-room";
-    } else if (data.sport == "badminton") {
-      roomslist_room.className = "badminton-room roomslist-room";
-    } else if (data.sport == "volleyball") {
-      roomslist_room.className = "volleyball-room roomslist-room";
+  pendingMembersSwitch.addEventListener('click', () => {
+    if (pendingMembersSwitch.classList.contains("disabled")) {
+      pendingMembersSwitch.classList.remove("disabled");
+      eventMembersSwitch.classList.add("disabled");
+      eventMembersWindow.style.display = "none";
+      pendingMembersWindow.style.display = "unset";
     }
+  });
 
-    // CREATE INPUT
-    let input = document.createElement('input');
-    input.setAttribute("type", "radio");
-    input.setAttribute("name", "room");
-    input.className = "room-radio";
-    let id_input = "/" + id;
-    input.id = id_input;
-
-    // CREATE LABEL
-    let label = document.createElement("label");
-    label.setAttribute("for", id_input);
-
-    // CREATE SPAN
-    let span = document.createElement('span');
-    span.innerHTML = data.event_name;
-
-    // APPEND TO FORM
-    label.appendChild(span);
-    roomslist_room.appendChild(input);
-    roomslist_room.appendChild(label);
-    form_room.appendChild(roomslist_room);
-  }
-
-  function renderMember(member) {
-    dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', member).get().then((snapshot) => {
-      snapshot.docs.forEach(document => {
-        renderMember2(document.data());
-      })
-    })
-  }
-
-  function renderMember2(data) {
-    // CREATE P TAG
-    let p = document.createElement('p');
-
-    if (data.sex == "male") {
-      p.className = "members-event-list male";
-    } else {
-      p.className = "members-event-list female";
+  eventMembersSwitch.addEventListener('click', () => {
+    if (eventMembersSwitch.classList.contains("disabled")) {
+      eventMembersSwitch.classList.remove("disabled");
+      pendingMembersSwitch.classList.add("disabled");
+      pendingMembersWindow.style.display = "none";
+      eventMembersWindow.style.display = "unset";
     }
-
-    p.innerHTML = data.username;
-
-    // CREATE SPAN
-    let span = document.createElement('span');
-    span.className = "members-age";
-    span.innerHTML = ', ' + data.age;
-
-    // APPEND TO EVENT_MEMBERS
-    p.appendChild(span);
-    event_members.appendChild(p);
-  }
-
-  function renderPending(pending) {
-    dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
-      snapshot.docs.forEach(document => {
-        renderPending2(document.data());
-      })
-    })
-  }
-
-  function renderPending2(data) {
-    // CREATE DIV WRAPPER
-    let div = document.createElement('div');
-    div.className = "members-pending-group";
-
-    // CREATE P TAG
-    let p = document.createElement('p');
-
-    if (data.sex == "male") {
-      p.className = "members-event-list male";
-    } else {
-      p.className = "members-event-list female";
-    }
-
-    p.innerHTML = data.username;
-
-    // CREATE SPAN
-    let span = document.createElement('span');
-    span.className = "members-age";
-    span.innerHTML = ', ' + data.age;
-
-    // CREATE DIV BUTTON
-    let div_button = document.createElement('div');
-    div_button.className = "buttons";
-
-    // CREATE ACCEPT BUTTON
-    let accept_button = document.createElement('div');
-    accept_button.className = "accept-button";
-    let img_accept = document.createElement('img');
-    img_accept.src = "./images/accept-button.svg";
-
-    // CREATE REJECT BUTTON
-    let reject_button = document.createElement('div');
-    reject_button.className = "reject-button";
-    let img_reject = document.createElement('img');
-    img_reject.src = "./images/reject-button.svg";
-
-    // APPEND TO PENDING_MEMBERS
-    reject_button.appendChild(img_reject);
-    accept_button.appendChild(img_accept);
-    div_button.appendChild(accept_button);
-    div_button.appendChild(reject_button);
-    p.appendChild(span);
-    div.appendChild(p);
-    div.appendChild(div_button);
-    pending_members.appendChild(div);
-
-  }
-
-  function renderPendingDisabled() {
-    // CREATE DIV WRAP
-    let div = document.createElement('div');
-    div.className = "members-pending-disabled";
-
-    // CREATE DIV ICON
-    let div_icon = document.createElement('div');
-    div_icon.className = "members-pending-disabled-icon";
-
-    let img = document.createElement('img');
-    img.src = "./images/notallowed.svg";
-
-    // CREATE P TAG
-    let p = document.createElement('p');
-    p.className = "members-pending-disabled-text";
-    p.innerHTML = "Only the owner can access this tab...";
-
-    // APPEND TO PENDING MEMBERS
-    div_icon.appendChild(img);
-    div.appendChild(div_icon);
-    div.appendChild(p);
-    pending_members.appendChild(div);
-  }
+  });

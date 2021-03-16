@@ -1008,7 +1008,7 @@ a {
   height: 90vh;
   padding: 0px 40px;
 
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;

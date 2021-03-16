@@ -90,10 +90,10 @@
   // MEMBERS AND PENDING
   */
 
-  let form_room = document.querySelector(".roomslist");
-  let event_members = document.querySelector(".event-members");
-  let pending_members = document.querySelector('.pending-members');
-  let members_amount = document.querySelector('.members-amount');
+  // let form_room = document.querySelector(".roomslist");
+  // let event_members = document.querySelector(".event-members");
+  // let pending_members = document.querySelector('.pending-members');
+  // let members_amount = document.querySelector('.members-amount');
 
   dbf.collection('account').doc("MXd9rXgzZOvPLldbcyCY").get().then(function (doc) {
     let matches_join_created = doc.data().matches_created_join;
@@ -106,6 +106,7 @@
   })
 
   function renderRoom(data, id) {
+    let form_room = document.querySelector(".roomslist");
     // CREATE DIV
     let roomslist_room = document.createElement('div');
 
@@ -151,6 +152,7 @@
   }
 
   function renderMember2(data) {
+    let event_members = document.querySelector(".event-members");
     // CREATE P TAG
     let p = document.createElement('p');
 
@@ -181,6 +183,7 @@
   }
 
   function renderPending2(data) {
+    let pending_members = document.querySelector('.pending-members');
     // CREATE DIV WRAPPER
     let div = document.createElement('div');
     div.className = "members-pending-group";
@@ -208,6 +211,7 @@
     // CREATE ACCEPT BUTTON
     let accept_button = document.createElement('div');
     accept_button.className = "accept-button";
+    accept_button.value = data.username;
     let img_accept = document.createElement('img');
     img_accept.src = "./images/accept-button.svg";
 
@@ -217,6 +221,44 @@
     let img_reject = document.createElement('img');
     img_reject.src = "./images/reject-button.svg";
 
+    /*-------------------------------------------------*/
+
+    // CREATE DIV REQUEST APPLICATION
+    let div_request_application = document.createElement('div');
+    div_request_application.className = "request-application";
+    div_request_application.id = data.username;
+
+    let div_application_box = document.createElement('div');
+    div_application_box.className = "application-box";
+
+    let div_application_close = document.createElement('div');
+    div_application_close.className = "application-close";
+    div_application_close.innerHTML = "+";
+
+    let h4_application_title = document.createElement('h4');
+    h4_application_title.className = "application-title";
+    h4_application_title.innerHTML = "Request Application";
+
+    let span_application_title = document.createElement('span');
+    span_application_title.innerHTML = " " + data.username + "'s ";
+
+    let div_application_text = document.createElement('div');
+    div_application_text.className = "application-text";
+    div_application_text.innerHTML = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in. Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit vel nobis itaque velit dignissimos facere!";
+
+    let div_application_acccept = document.createElement('div');
+    div_application_acccept.className = "application-accept";
+    div_application_acccept.innerHTML = "ACCEPT";
+
+    h4_application_title.appendChild(span_application_title);
+    div_application_box.appendChild(div_application_close);
+    div_application_box.appendChild(h4_application_title);
+    div_application_box.appendChild(div_application_text);
+    div_application_box.appendChild(div_application_acccept);
+    div_request_application.appendChild(div_application_box);
+
+    /*-------------------------------------------------*/
+
     // APPEND TO PENDING_MEMBERS
     reject_button.appendChild(img_reject);
     accept_button.appendChild(img_accept);
@@ -225,11 +267,25 @@
     p.appendChild(span);
     div.appendChild(p);
     div.appendChild(div_button);
+    div.appendChild(div_request_application);
     pending_members.appendChild(div);
 
+    document.addEventListener('click', () => {
+      let applicationClose = document.querySelectorAll('.application-close');
+
+      for (let i = 0; i < applicationClose.length; i++) {
+        applicationClose[i].addEventListener('click', () => {
+          let applicationCloseParent = applicationClose[i].parentNode;
+          let requestApplication = applicationCloseParent.parentNode;
+          requestApplication.style.display = "none";
+        });
+      }
+
+    })
   }
 
   function renderPendingDisabled() {
+    let pending_members = document.querySelector('.pending-members');
     // CREATE DIV WRAP
     let div = document.createElement('div');
     div.className = "members-pending-disabled";
@@ -403,44 +459,9 @@
 
     /*-------------------------------------------------*/
 
-    // CREATE DIV REQUEST APPLICATION
-    let div_request_application = document.createElement('div');
-    div_request_application.className = "request-application";
-
-    let div_application_box = document.createElement('div');
-    div_application_box.className = "application-box";
-
-    let div_application_close = document.createElement('div');
-    div_application_close.className = "application-close";
-    div_application_close.innerHTML = "+";
-
-    let h4_application_title = document.createElement('h4');
-    h4_application_title.className = "application-title";
-    h4_application_title.innerHTML = "Request Application";
-
-    let span_application_title = document.createElement('span');
-    span_application_title.innerHTML = "Name's ";
-
-    let div_application_text = document.createElement('div');
-    div_application_text.className = "application-text";
-    div_application_text.innerHTML = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in. Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit vel nobis itaque velit dignissimos facere!";
-
-    let div_application_acccept = document.createElement('div');
-    div_application_acccept.className = "application-accept";
-    div_application_acccept.innerHTML = "ACCEPT";
-
-    h4_application_title.appendChild(span_application_title);
-    div_application_box.appendChild(div_application_close);
-    div_application_box.appendChild(h4_application_title);
-    div_application_box.appendChild(div_application_text);
-    div_application_box.appendChild(div_application_acccept);
-
-    /*-------------------------------------------------*/
-
     div_content.appendChild(section_roomlist_tab);
     div_content.appendChild(section_chatroom);
     div_content.appendChild(section_members_tab);
-    div_content.appendChild(div_request_application);
 
     div_wrapper.appendChild(div_content);
   }
@@ -812,16 +833,20 @@
     document.addEventListener("click", () => {
       // GET ROOM ID
       let roomlist = document.querySelectorAll(".roomslist-room");
+      let event_members = document.querySelector(".event-members");
+      let pending_members = document.querySelector('.pending-members');
+      let members_amount = document.querySelector('.members-amount');
 
       // REQUEST APPLICATION
       let acceptButton = document.querySelectorAll('.accept-button');
       let rejectButton = document.querySelectorAll('.reject-button');
       let pendingMembers = document.querySelectorAll('.members-pending-group');
-      let requestApplication = document.querySelector('.request-application');
-      let applicationClose = document.querySelector('.application-close')
+
 
       for (let i = 0; i < acceptButton.length; i++) {
         acceptButton[i].addEventListener('click', () => {
+          let requestApplicationId = acceptButton[i].value;
+          let requestApplication = document.getElementById(requestApplicationId);
           requestApplication.style.display = "unset";
         });
       }
@@ -831,10 +856,6 @@
           pendingMembers[i].style.display = "none"
         });
       }
-
-      applicationClose.addEventListener('click', () => {
-        requestApplication.style.display = "none";
-      });
 
       // ROOM
       roomlist.forEach(room => {
@@ -915,8 +936,8 @@
 
   // LOAD CONTENT AND CHAT
 
-  // loadContent();
-  // loadChat();
+  loadContent();
+  loadChat();
 
 
   /*

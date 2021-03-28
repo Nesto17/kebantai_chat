@@ -174,15 +174,17 @@
     event_members.appendChild(p);
   }
 
-  function renderPending(pending) {
+  function renderPending(pending, reason) {
+    var x = 0;
     dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
       snapshot.docs.forEach(document => {
-        renderPending2(document.data());
+        renderPending2(document.data(), reason[x]);
+        x += 1;
       })
     })
   }
 
-  function renderPending2(data) {
+  function renderPending2(data, reason) {
     let pending_members = document.querySelector('.pending-members');
     // CREATE DIV WRAPPER
     let div = document.createElement('div');
@@ -244,7 +246,7 @@
 
     let div_application_text = document.createElement('div');
     div_application_text.className = "application-text";
-    div_application_text.innerHTML = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, in. Earum minima assumenda harum sequi, ratione, neque cum quidem corporis dolore fugit alias sit vel nobis itaque velit dignissimos facere!";
+    div_application_text.innerHTML = reason;
 
     let div_application_acccept = document.createElement('div');
     div_application_acccept.className = "application-accept";
@@ -894,7 +896,18 @@
                     pending_members.removeChild(child);
                     child = pending_members.lastElementChild;
                   }
-                  renderPending(doc.data().pending);
+
+                  let doc_pending_data = doc.data().pending;
+                  let pending_list_member = [];
+                  let pending_list_reason = [];
+
+                  doc_pending_data.forEach(data_pending => {
+                    let split_data = data_pending.split("~~");
+                    pending_list_reason.push(split_data[0]);
+                    pending_list_member.push(split_data[1]);
+                  })
+
+                  renderPending(pending_list_member, pending_list_reason);
                 } else {
                   var child = pending_members.lastElementChild;
                   while (child) {

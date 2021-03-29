@@ -213,6 +213,7 @@
     // CREATE ACCEPT BUTTON
     let accept_button = document.createElement('div');
     accept_button.className = "accept-button";
+    accept_button.setAttribute("data-id", id);
     accept_button.value = data.username;
     let img_accept = document.createElement('img');
     img_accept.src = "./images/accept-button.svg";
@@ -843,12 +844,18 @@
 
       // REQUEST APPLICATION
       let acceptButton = document.querySelectorAll('.accept-button');
+      let application_accept = document.querySelectorAll('.application-accept');
       let rejectButton = document.querySelectorAll('.reject-button');
       let pendingMembers = document.querySelectorAll('.members-pending-group');
 
 
       for (let i = 0; i < acceptButton.length; i++) {
         acceptButton[i].addEventListener('click', () => {
+          let selected_button = document.querySelectorAll("#selected_button");
+          selected_button.forEach(button => {
+            button.removeAttribute('id');
+          })
+          acceptButton[i].id = 'selected_button';
           let requestApplicationId = acceptButton[i].value;
           let requestApplication = document.getElementById(requestApplicationId);
           requestApplication.style.display = "unset";
@@ -883,6 +890,39 @@
           pending_members.removeChild(button_parent)
         });
       }
+
+      application_accept.forEach(button => {
+        button.addEventListener('click', () => {
+          let account_id = document.querySelector("#selected_button").getAttribute("data-id");
+          let match_id_room = document.querySelector("#selected_room");
+          let match_id = match_id_room.querySelector("input").id.slice(1);
+          var re = new RegExp(account_id);
+
+          dbf.collection('match').doc(match_id).get().then(function (doc) {
+            let doc_pending = doc.data().pending;
+            let data_want_delete = "";
+
+            doc_pending.forEach(data => {
+              let match = data.match(re);
+              if (match) {
+                data_want_delete = match.input;
+              }
+            })
+
+            dbf.collection('match').doc(match_id).update({
+              pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
+            });
+          })
+
+          dbf.collection('match').doc(match_id).update({
+            matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
+          });
+
+          let pending_members = document.querySelector('.pending-members');
+          let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
+          pending_members.removeChild(button_parent)
+        })
+      })
 
       // ROOM
       roomlist.forEach(room => {

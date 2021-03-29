@@ -178,13 +178,13 @@
     var x = 0;
     dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
       snapshot.docs.forEach(document => {
-        renderPending2(document.data(), reason[x]);
+        renderPending2(document.data(), reason[x], pending[x]);
         x += 1;
       })
     })
   }
 
-  function renderPending2(data, reason) {
+  function renderPending2(data, reason, id) {
     let pending_members = document.querySelector('.pending-members');
     // CREATE DIV WRAPPER
     let div = document.createElement('div');
@@ -220,6 +220,7 @@
     // CREATE REJECT BUTTON
     let reject_button = document.createElement('div');
     reject_button.className = "reject-button";
+    reject_button.id = id;
     let img_reject = document.createElement('img');
     img_reject.src = "./images/reject-button.svg";
 
@@ -251,6 +252,7 @@
     let div_application_acccept = document.createElement('div');
     div_application_acccept.className = "application-accept";
     div_application_acccept.innerHTML = "ACCEPT";
+    div_application_acccept.id = id;
 
     h4_application_title.appendChild(span_application_title);
     div_application_box.appendChild(div_application_close);
@@ -855,7 +857,30 @@
 
       for (let i = 0; i < rejectButton.length; i++) {
         rejectButton[i].addEventListener('click', () => {
-          pendingMembers[i].style.display = "none"
+          let account_id = rejectButton[i].id;
+          let match_id_room = document.querySelector("#selected_room");
+          let match_id = match_id_room.querySelector("input").id.slice(1);
+          var re = new RegExp(account_id);
+
+          dbf.collection('match').doc(match_id).get().then(function (doc) {
+            let doc_pending = doc.data().pending;
+            let data_want_delete = "";
+
+            doc_pending.forEach(data => {
+              let match = data.match(re);
+              if (match) {
+                data_want_delete = match.input;
+              }
+            })
+
+            dbf.collection('match').doc(match_id).update({
+              pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
+            });
+          })
+
+          let pending_members = document.querySelector('.pending-members');
+          let button_parent = rejectButton[i].parentNode.parentNode;
+          pending_members.removeChild(button_parent)
         });
       }
 
@@ -863,6 +888,11 @@
       roomlist.forEach(room => {
         room.addEventListener("click", (e) => {
           e.preventDefault();
+          let selected_room = document.querySelectorAll("#selected_room");
+          selected_room.forEach(room => {
+            room.removeAttribute('id');
+          })
+          room.id = "selected_room";
           let input = room.querySelector("input");
           let input_id = input.id;
 

@@ -178,13 +178,13 @@
     var x = 0;
     dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
       snapshot.docs.forEach(document => {
-        renderPending2(document.data(), reason[x]);
+        renderPending2(document.data(), reason[x], pending[x]);
         x += 1;
       })
     })
   }
 
-  function renderPending2(data, reason) {
+  function renderPending2(data, reason, id) {
     let pending_members = document.querySelector('.pending-members');
     // CREATE DIV WRAPPER
     let div = document.createElement('div');
@@ -213,6 +213,7 @@
     // CREATE ACCEPT BUTTON
     let accept_button = document.createElement('div');
     accept_button.className = "accept-button";
+    accept_button.setAttribute("data-id", id);
     accept_button.value = data.username;
     let img_accept = document.createElement('img');
     img_accept.src = "./images/accept-button.svg";
@@ -220,6 +221,7 @@
     // CREATE REJECT BUTTON
     let reject_button = document.createElement('div');
     reject_button.className = "reject-button";
+    reject_button.id = id;
     let img_reject = document.createElement('img');
     img_reject.src = "./images/reject-button.svg";
 
@@ -251,6 +253,7 @@
     let div_application_acccept = document.createElement('div');
     div_application_acccept.className = "application-accept";
     div_application_acccept.innerHTML = "ACCEPT";
+    div_application_acccept.id = id;
 
     h4_application_title.appendChild(span_application_title);
     div_application_box.appendChild(div_application_close);
@@ -841,12 +844,18 @@
 
       // REQUEST APPLICATION
       let acceptButton = document.querySelectorAll('.accept-button');
+      let application_accept = document.querySelectorAll('.application-accept');
       let rejectButton = document.querySelectorAll('.reject-button');
       let pendingMembers = document.querySelectorAll('.members-pending-group');
 
 
       for (let i = 0; i < acceptButton.length; i++) {
         acceptButton[i].addEventListener('click', () => {
+          let selected_button = document.querySelectorAll("#selected_button");
+          selected_button.forEach(button => {
+            button.removeAttribute('id');
+          })
+          acceptButton[i].id = 'selected_button';
           let requestApplicationId = acceptButton[i].value;
           let requestApplication = document.getElementById(requestApplicationId);
           requestApplication.style.display = "unset";
@@ -855,14 +864,75 @@
 
       for (let i = 0; i < rejectButton.length; i++) {
         rejectButton[i].addEventListener('click', () => {
-          pendingMembers[i].style.display = "none"
+          let account_id = rejectButton[i].id;
+          let match_id_room = document.querySelector("#selected_room");
+          let match_id = match_id_room.querySelector("input").id.slice(1);
+          var re = new RegExp(account_id);
+
+          dbf.collection('match').doc(match_id).get().then(function (doc) {
+            let doc_pending = doc.data().pending;
+            let data_want_delete = "";
+
+            doc_pending.forEach(data => {
+              let match = data.match(re);
+              if (match) {
+                data_want_delete = match.input;
+              }
+            })
+
+            dbf.collection('match').doc(match_id).update({
+              pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
+            });
+          })
+
+          let pending_members = document.querySelector('.pending-members');
+          let button_parent = rejectButton[i].parentNode.parentNode;
+          pending_members.removeChild(button_parent)
         });
       }
+
+      application_accept.forEach(button => {
+        button.addEventListener('click', () => {
+          let account_id = document.querySelector("#selected_button").getAttribute("data-id");
+          let match_id_room = document.querySelector("#selected_room");
+          let match_id = match_id_room.querySelector("input").id.slice(1);
+          var re = new RegExp(account_id);
+
+          dbf.collection('match').doc(match_id).get().then(function (doc) {
+            let doc_pending = doc.data().pending;
+            let data_want_delete = "";
+
+            doc_pending.forEach(data => {
+              let match = data.match(re);
+              if (match) {
+                data_want_delete = match.input;
+              }
+            })
+
+            dbf.collection('match').doc(match_id).update({
+              pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
+            });
+          })
+
+          dbf.collection('match').doc(match_id).update({
+            matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
+          });
+
+          let pending_members = document.querySelector('.pending-members');
+          let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
+          pending_members.removeChild(button_parent)
+        })
+      })
 
       // ROOM
       roomlist.forEach(room => {
         room.addEventListener("click", (e) => {
           e.preventDefault();
+          let selected_room = document.querySelectorAll("#selected_room");
+          selected_room.forEach(room => {
+            room.removeAttribute('id');
+          })
+          room.id = "selected_room";
           let input = room.querySelector("input");
           let input_id = input.id;
 

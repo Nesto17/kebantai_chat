@@ -417,10 +417,6 @@
   }
   
   @media (max-width: 414px) {
-    .header-menu {
-      margin-left: 1.5rem;
-    }
-  
     .left-tab-name,
     .right-tab-name {
       font-size: 14px;

@@ -64,8 +64,6 @@
     darkBackground.classList.add('active');
   });
 
-  let roomslistTab = document.querySelector('.roomslist-tab');
-  let membersTab = document.querySelector('.members-tab')
 
   chat_others_toggle.addEventListener('click', () => {
     roomslistTab.classList.toggle('active');
@@ -1050,3 +1048,6 @@
       eventMembersWindow.style.display = "unset";
     }
   });
+
+  let roomslistTab = document.querySelector('.roomslist-tab');
+  let membersTab = document.querySelector('.members-tab')

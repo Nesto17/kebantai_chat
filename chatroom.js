@@ -141,18 +141,25 @@
     form_room.appendChild(roomslist_room);
   }
 
+  let lastClick2 = 0;
+  const delay = 500;
+
   function renderMember(member) {
-    dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', member).get().then((snapshot) => {
-      snapshot.docs.forEach(document => {
-        renderMember2(document.data());
+    if ((lastClick2 + delay) < Date.now()) {
+      dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', member).get().then((snapshot) => {
+        snapshot.docs.forEach(document => {
+          renderMember2(document.data(), document.id);
+        })
       })
-    })
+      lastClick2 = Date.now();
+    }
   }
 
-  function renderMember2(data) {
+  function renderMember2(data, id) {
     let event_members = document.querySelector(".event-members");
     // CREATE P TAG
     let p = document.createElement('p');
+    p.id = id;
 
     if (data.sex == "male") {
       p.className = "members-event-list male";
@@ -172,12 +179,135 @@
     event_members.appendChild(p);
   }
 
+  // PREVENT BOUNCE
+  let lastClick = 0;
+
+  function renderMemberAndPending(room_id_firebase) {
+    let form_room = document.querySelector(".roomslist");
+    let event_members = document.querySelector(".event-members");
+    let pending_members = document.querySelector('.pending-members');
+    let members_amount = document.querySelector('.members-amount');
+
+    if ((lastClick + delay) < Date.now()) {
+      dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), "==", room_id_firebase).onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            if (change.doc.data().owner) {
+              let member = [change.doc.data().owner];
+              member = member.concat(change.doc.data().matches_join);
+              member.forEach(id => {
+                let check_member = document.getElementById(`${id}`);
+                if (check_member) {
+                  let index_member = member.indexOf(id);
+                  member.splice(index_member, 1);
+                }
+              })
+              renderMember(member);
+
+              // AMOUNT OF MEMBERS
+              let total_member = 1 + change.doc.data().matches_join.length;
+              members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
+
+              if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
+                var child = pending_members.lastElementChild;
+                while (child) {
+                  pending_members.removeChild(child);
+                  child = pending_members.lastElementChild;
+                }
+
+                let doc_pending_data = change.doc.data().pending;
+                let pending_list_member = [];
+                let pending_list_reason = [];
+
+                doc_pending_data.forEach(data_pending => {
+                  let split_data = data_pending.split("~~");
+                  let pending_member_id_to_check = split_data[1];
+                  let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
+                  if (!check_pending_member) {
+                    pending_list_reason.push(split_data[0]);
+                    pending_list_member.push(split_data[1]);
+                  }
+                })
+
+                if (pending_list_member.length > 0) {
+                  renderPending(pending_list_member, pending_list_reason);
+                }
+
+              } else {
+                var child = pending_members.lastElementChild;
+                while (child) {
+                  pending_members.removeChild(child);
+                  child = pending_members.lastElementChild;
+                }
+                renderPendingDisabled();
+              }
+            }
+          } else if (change.type === "modified") {
+            if (change.doc.data().owner) {
+              let member = [change.doc.data().owner];
+              member = member.concat(change.doc.data().matches_join);
+              let new_array = [];
+              member.forEach(id => {
+                let check_member = document.getElementById(`${id}`);
+                if (!check_member) {
+                  new_array.push(id);
+                }
+              })
+              if (new_array.length > 0) {
+                renderMember(new_array);
+              }
+
+              // AMOUNT OF MEMBERS
+              let total_member = 1 + change.doc.data().matches_join.length;
+              members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
+
+              if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
+                var child = pending_members.lastElementChild;
+                while (child) {
+                  pending_members.removeChild(child);
+                  child = pending_members.lastElementChild;
+                }
+
+                let doc_pending_data = change.doc.data().pending;
+                let pending_list_member = [];
+                let pending_list_reason = [];
+
+                doc_pending_data.forEach(data_pending => {
+                  let split_data = data_pending.split("~~");
+                  let pending_member_id_to_check = split_data[1];
+                  let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
+                  if (!check_pending_member) {
+                    pending_list_reason.push(split_data[0]);
+                    pending_list_member.push(split_data[1]);
+                  }
+                })
+
+                if (pending_list_member.length > 0) {
+                  renderPending(pending_list_member, pending_list_reason);
+                }
+
+              } else {
+                var child = pending_members.lastElementChild;
+                while (child) {
+                  pending_members.removeChild(child);
+                  child = pending_members.lastElementChild;
+                }
+                renderPendingDisabled();
+              }
+            }
+          }
+        });
+      })
+      lastClick = Date.now();
+    }
+  }
+
   function renderPending(pending, reason) {
-    var x = 0;
+    var x = pending.length - 1;
     dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
       snapshot.docs.forEach(document => {
         renderPending2(document.data(), reason[x], pending[x]);
-        x += 1;
+        x -= 1;
       })
     })
   }
@@ -793,46 +923,6 @@
     let room_id = "/chats_1";
     let roomlist = document.querySelectorAll(".roomslist-room");
 
-    roomlist.forEach(room => {
-      room.addEventListener("click", (e) => {
-        e.preventDefault();
-        let input = room.querySelector("input");
-        let input_id = input.id;
-
-        input.checked = true;
-
-        if (room_id !== input_id) {
-          room_id = input_id;
-          app.refresh_chat(room_id);
-
-          input.checked = true;
-
-          // GANTI TITLE CHATNYA
-          let chat_title_html = document.getElementById("chat_title");
-          let title_chat = document.getElementById("chat_title").querySelector("h4");
-          let label_room = room.querySelector("label");
-          let span_room = label_room.querySelector("span");
-          title_chat.innerHTML = span_room.innerHTML;
-
-          // GANTI WARNA TITLE CHATNYA
-          let class_room = room.className.split(" ")[0];
-          if (class_room == "basketball-room") {
-            chat_title_html.style.background = "#fd8725";
-            chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(254, 188, 47, 0.4)";
-          } else if (class_room == "soccer-room") {
-            chat_title_html.style.background = "#51c759";
-            chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(167, 255, 201, 0.3)";
-          } else if (class_room == "badminton-room") {
-            chat_title_html.style.background = "#7600db";
-            chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
-          } else {
-            chat_title_html.style.background = "#ff4778";
-            chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
-          }
-        }
-      })
-    })
-
     document.addEventListener("click", () => {
       // GET ROOM ID
       let roomlist = document.querySelectorAll(".roomslist-room");
@@ -890,7 +980,8 @@
       }
 
       application_accept.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault;
           let account_id = document.querySelector("#selected_button").getAttribute("data-id");
           let match_id_room = document.querySelector("#selected_room");
           let match_id = match_id_room.querySelector("input").id.slice(1);
@@ -948,44 +1039,7 @@
               child = event_members.lastElementChild;
             }
 
-            dbf.collection('match').doc(room_id_firebase).get().then((doc) => {
-              if (doc.exists) {
-                let member = [doc.data().owner];
-                member = member.concat(doc.data().matches_join);
-                renderMember(member);
-
-                // AMOUNT OF MEMBERS
-                let total_member = 1 + doc.data().matches_join.length;
-                members_amount.innerHTML = total_member + ' / ' + doc.data().limit;
-
-                if (doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
-                  var child = pending_members.lastElementChild;
-                  while (child) {
-                    pending_members.removeChild(child);
-                    child = pending_members.lastElementChild;
-                  }
-
-                  let doc_pending_data = doc.data().pending;
-                  let pending_list_member = [];
-                  let pending_list_reason = [];
-
-                  doc_pending_data.forEach(data_pending => {
-                    let split_data = data_pending.split("~~");
-                    pending_list_reason.push(split_data[0]);
-                    pending_list_member.push(split_data[1]);
-                  })
-
-                  renderPending(pending_list_member, pending_list_reason);
-                } else {
-                  var child = pending_members.lastElementChild;
-                  while (child) {
-                    pending_members.removeChild(child);
-                    child = pending_members.lastElementChild;
-                  }
-                  renderPendingDisabled();
-                }
-              }
-            })
+            renderMemberAndPending(room_id_firebase);
 
             // GANTI TITLE CHATNYA
             let chat_title_html = document.getElementById("chat_title");
@@ -1020,7 +1074,6 @@
   loadContent();
   loadChat();
 
-
   /*
   // PENDING AND MEMBER SWITCH  
   */
@@ -1050,4 +1103,30 @@
   });
 
   let roomslistTab = document.querySelector('.roomslist-tab');
-  let membersTab = document.querySelector('.members-tab')
+  let membersTab = document.querySelector('.members-tab');
+
+
+  dbf.collection("account").where(firebase.firestore.FieldPath.documentId(), "==", "MXd9rXgzZOvPLldbcyCY")
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "modified") {
+          let matches_join_created = change.doc.data().matches_created_join;
+          console.log("Modified data account: ", matches_join_created);
+
+          matches_join_created.forEach(id => {
+            let check_room = document.getElementById(`/${id}`);
+            if (!check_room) {
+              dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', id).get().then((snapshot) => {
+                snapshot.docs.forEach(dok => {
+                  if (dok.data().owner) {
+                    renderRoom(dok.data(), dok.id);
+                  } else {
+                    console.log(`this ${dok.id} does not have any owner`);
+                  }
+                })
+              })
+            }
+          })
+        }
+      });
+    });

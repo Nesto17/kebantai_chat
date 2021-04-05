@@ -98,24 +98,32 @@
 
     dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), 'in', matches_join_created).get().then((snapshot) => {
       snapshot.docs.forEach(dok => {
-        renderRoom(dok.data(), dok.id);
+        let owner = true;
+        if (!dok.data().owner) {
+          owner = false;
+        }
+        renderRoom(dok.data(), dok.id, owner);
       })
     })
   })
 
-  function renderRoom(data, id) {
+  function renderRoom(data, id, owner_state) {
     let form_room = document.querySelector(".roomslist");
     // CREATE DIV
     let roomslist_room = document.createElement('div');
 
-    if (data.sport == "basketball") {
-      roomslist_room.className = "basketball-room roomslist-room";
-    } else if (data.sport == "soccer") {
-      roomslist_room.className = "soccer-room roomslist-room";
-    } else if (data.sport == "badminton") {
-      roomslist_room.className = "badminton-room roomslist-room";
-    } else if (data.sport == "volleyball") {
-      roomslist_room.className = "volleyball-room roomslist-room";
+    if (owner_state) {
+      if (data.sport == "basketball") {
+        roomslist_room.className = "basketball-room roomslist-room";
+      } else if (data.sport == "soccer") {
+        roomslist_room.className = "soccer-room roomslist-room";
+      } else if (data.sport == "badminton") {
+        roomslist_room.className = "badminton-room roomslist-room";
+      } else if (data.sport == "volleyball") {
+        roomslist_room.className = "volleyball-room roomslist-room";
+      }
+    } else {
+      roomslist_room.className = "deleted-room roomslist-room";
     }
 
     // CREATE INPUT
@@ -141,6 +149,7 @@
     form_room.appendChild(roomslist_room);
   }
 
+  // PREVENT BOUNCE
   let lastClick2 = 0;
   const delay = 500;
 
@@ -244,6 +253,7 @@
             }
           } else if (change.type === "modified") {
             if (change.doc.data().owner) {
+              // ADD USER TO MEMBER SECTION
               let member = [change.doc.data().owner];
               member = member.concat(change.doc.data().matches_join);
               let new_array = [];
@@ -256,6 +266,9 @@
               if (new_array.length > 0) {
                 renderMember(new_array);
               }
+
+              // DELETE USER FROM MEMBER SECTION
+
 
               // AMOUNT OF MEMBERS
               let total_member = 1 + change.doc.data().matches_join.length;
@@ -299,6 +312,7 @@
         });
       })
       lastClick = Date.now();
+      last_member = temp_last_member;
     }
   }
 
@@ -442,6 +456,44 @@
     pending_members.appendChild(div);
   }
 
+
+  // PREVENT BOUNCE
+  let lastClick3 = 0;
+
+  function deletePending() {
+    if ((lastClick3 + delay) < Date.now()) {
+      let account_id = document.querySelector("#selected_button").getAttribute("data-id");
+      let match_id_room = document.querySelector("#selected_room");
+      let match_id = match_id_room.querySelector("input").id.slice(1);
+      var re = new RegExp(account_id);
+
+      dbf.collection('match').doc(match_id).get().then(function (doc) {
+        let doc_pending = doc.data().pending;
+        let data_want_delete = "";
+
+        doc_pending.forEach(data => {
+          let match = data.match(re);
+          if (match) {
+            data_want_delete = match.input;
+          }
+        })
+
+        dbf.collection('match').doc(match_id).update({
+          pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
+        });
+      })
+
+      dbf.collection('match').doc(match_id).update({
+        matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
+      });
+
+      let pending_members = document.querySelector('.pending-members');
+      let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
+      pending_members.removeChild(button_parent);
+      lastClick3 = Date.now();
+    }
+  }
+
   /* 
   // CONTENT AND CHATROOM 
   */
@@ -481,7 +533,8 @@
 
     // CREATE ROOM 1
     let div_basketball_room = document.createElement('div');
-    div_basketball_room.className = "basketball-room roomslist-room";
+    div_basketball_room.className = "deleted-room roomslist-room";
+    // div_basketball_room.className = "basketball-room roomslist-room";
 
     let input_basket = document.createElement('input');
     input_basket.setAttribute('type', 'radio');
@@ -982,34 +1035,35 @@
       application_accept.forEach(button => {
         button.addEventListener('click', (e) => {
           e.preventDefault;
-          let account_id = document.querySelector("#selected_button").getAttribute("data-id");
-          let match_id_room = document.querySelector("#selected_room");
-          let match_id = match_id_room.querySelector("input").id.slice(1);
-          var re = new RegExp(account_id);
+          deletePending();
+          //   let account_id = document.querySelector("#selected_button").getAttribute("data-id");
+          //   let match_id_room = document.querySelector("#selected_room");
+          //   let match_id = match_id_room.querySelector("input").id.slice(1);
+          //   var re = new RegExp(account_id);
 
-          dbf.collection('match').doc(match_id).get().then(function (doc) {
-            let doc_pending = doc.data().pending;
-            let data_want_delete = "";
+          //   dbf.collection('match').doc(match_id).get().then(function (doc) {
+          //     let doc_pending = doc.data().pending;
+          //     let data_want_delete = "";
 
-            doc_pending.forEach(data => {
-              let match = data.match(re);
-              if (match) {
-                data_want_delete = match.input;
-              }
-            })
+          //     doc_pending.forEach(data => {
+          //       let match = data.match(re);
+          //       if (match) {
+          //         data_want_delete = match.input;
+          //       }
+          //     })
 
-            dbf.collection('match').doc(match_id).update({
-              pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
-            });
-          })
+          //     dbf.collection('match').doc(match_id).update({
+          //       pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
+          //     });
+          //   })
 
-          dbf.collection('match').doc(match_id).update({
-            matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
-          });
+          //   dbf.collection('match').doc(match_id).update({
+          //     matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
+          //   });
 
-          let pending_members = document.querySelector('.pending-members');
-          let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
-          pending_members.removeChild(button_parent)
+          //   let pending_members = document.querySelector('.pending-members');
+          //   let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
+          //   pending_members.removeChild(button_parent)
         })
       })
 
@@ -1118,11 +1172,11 @@
             if (!check_room) {
               dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', id).get().then((snapshot) => {
                 snapshot.docs.forEach(dok => {
-                  if (dok.data().owner) {
-                    renderRoom(dok.data(), dok.id);
-                  } else {
-                    console.log(`this ${dok.id} does not have any owner`);
+                  let owner = true;
+                  if (!dok.data().owner) {
+                    owner = false;
                   }
+                  renderRoom(dok.data(), dok.id, owner);
                 })
               })
             }

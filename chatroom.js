@@ -190,6 +190,7 @@
 
   // PREVENT BOUNCE
   let lastClick = 0;
+  var first_member = [];
 
   function renderMemberAndPending(room_id_firebase) {
     let form_room = document.querySelector(".roomslist");
@@ -205,6 +206,7 @@
               let member = [change.doc.data().owner];
               member = member.concat(change.doc.data().matches_join);
               member.forEach(id => {
+                first_member.push(id);
                 let check_member = document.getElementById(`${id}`);
                 if (check_member) {
                   let index_member = member.indexOf(id);
@@ -267,8 +269,7 @@
                 renderMember(new_array);
               }
 
-              // DELETE USER FROM MEMBER SECTION
-
+              checkMemberAndPending(room_id_firebase);
 
               // AMOUNT OF MEMBERS
               let total_member = 1 + change.doc.data().matches_join.length;
@@ -312,8 +313,23 @@
         });
       })
       lastClick = Date.now();
-      last_member = temp_last_member;
     }
+  }
+
+
+  // PREVENT BOUNCE 
+  let lastClick4 = 0;
+
+  function checkMemberAndPending(room_id) {
+    if ((lastClick4 + delay) < Date.now()) {
+      console.log("checkMemberandPending", first_member);
+    }
+    // dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', room_id).get().then((snapshot) => {
+    //   snapshot.docs.forEach(dok => {
+    //     let current_member_database = dok.data().matches_join;
+    //   })
+    // })
+    lastClick4 = Date.now();
   }
 
   function renderPending(pending, reason) {

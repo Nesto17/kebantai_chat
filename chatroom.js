@@ -21,6 +21,8 @@
     timestampsInSnapshots: true
   });
 
+  /**********************************************************************************************/
+
   var chat_others_toggle = document.createElement('div')
   chat_others_toggle.setAttribute('id', 'chat_others_toggle')
   chat_others_toggle.classList.add('chat_toggle')
@@ -153,6 +155,30 @@
   let lastClick2 = 0;
   const delay = 500;
 
+  function arr_diff(a1, a2) {
+
+    var a = [],
+      diff = [];
+
+    for (var i = 0; i < a1.length; i++) {
+      a[a1[i]] = true;
+    }
+
+    for (var i = 0; i < a2.length; i++) {
+      if (a[a2[i]]) {
+        delete a[a2[i]];
+      } else {
+        a[a2[i]] = true;
+      }
+    }
+
+    for (var k in a) {
+      diff.push(k);
+    }
+
+    return diff;
+  }
+
   function renderMember(member) {
     if ((lastClick2 + delay) < Date.now()) {
       dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', member).get().then((snapshot) => {
@@ -206,7 +232,9 @@
               let member = [change.doc.data().owner];
               member = member.concat(change.doc.data().matches_join);
               member.forEach(id => {
-                first_member.push(id);
+                if (id.length > 0) {
+                  first_member.push(id);
+                }
                 let check_member = document.getElementById(`${id}`);
                 if (check_member) {
                   let index_member = member.indexOf(id);
@@ -263,6 +291,9 @@
                 let check_member = document.getElementById(`${id}`);
                 if (!check_member) {
                   new_array.push(id);
+                  if (id.length > 0) {
+                    first_member.push(id);
+                  }
                 }
               })
               if (new_array.length > 0) {
@@ -316,19 +347,29 @@
     }
   }
 
-
   // PREVENT BOUNCE 
   let lastClick4 = 0;
 
   function checkMemberAndPending(room_id) {
     if ((lastClick4 + delay) < Date.now()) {
-      console.log("checkMemberandPending", first_member);
+      dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', room_id).get().then((snapshot) => {
+        snapshot.docs.forEach(dok => {
+          let current_member_database = dok.data().matches_join;
+          current_member_database.push(dok.data().owner);
+          // CHECK IF THERE IS MORE PEOPLE AT DATABASE
+          if (current_member_database.length < first_member.length) {
+            let name_to_delete = arr_diff(current_member_database, first_member);
+            let element_to_delete = document.getElementById(name_to_delete);
+            // FIND ELEMENT THEN DELETE IT
+            if (element_to_delete) {
+              document.getElementById(name_to_delete).remove();
+              let index_of_name_to_delete = first_member.indexOf(name_to_delete);
+              first_member.splice(index_of_name_to_delete, 1);
+            }
+          }
+        })
+      })
     }
-    // dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', room_id).get().then((snapshot) => {
-    //   snapshot.docs.forEach(dok => {
-    //     let current_member_database = dok.data().matches_join;
-    //   })
-    // })
     lastClick4 = Date.now();
   }
 

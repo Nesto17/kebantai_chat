@@ -217,6 +217,7 @@
   // PREVENT BOUNCE
   let lastClick = 0;
   var first_member = [];
+  var first_pending = [];
 
   function renderMemberAndPending(room_id_firebase) {
     let form_room = document.querySelector(".roomslist");
@@ -248,12 +249,6 @@
               members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
 
               if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
-                var child = pending_members.lastElementChild;
-                while (child) {
-                  pending_members.removeChild(child);
-                  child = pending_members.lastElementChild;
-                }
-
                 let doc_pending_data = change.doc.data().pending;
                 let pending_list_member = [];
                 let pending_list_reason = [];
@@ -265,6 +260,13 @@
                   if (!check_pending_member) {
                     pending_list_reason.push(split_data[0]);
                     pending_list_member.push(split_data[1]);
+                  }
+                  if (doc_pending_data.length > 0) {
+                    pending_list_member.forEach(pending => {
+                      let pending_and_reason = [pending];
+                      pending_and_reason.push(data_pending);
+                      first_pending.push(pending_and_reason);
+                    })
                   }
                 })
 
@@ -307,12 +309,6 @@
               members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
 
               if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
-                var child = pending_members.lastElementChild;
-                while (child) {
-                  pending_members.removeChild(child);
-                  child = pending_members.lastElementChild;
-                }
-
                 let doc_pending_data = change.doc.data().pending;
                 let pending_list_member = [];
                 let pending_list_reason = [];
@@ -324,6 +320,13 @@
                   if (!check_pending_member) {
                     pending_list_reason.push(split_data[0]);
                     pending_list_member.push(split_data[1]);
+                  }
+                  if (doc_pending_data.length > 0) {
+                    pending_list_member.forEach(pending => {
+                      let pending_and_reason = [pending];
+                      pending_and_reason.push(data_pending);
+                      first_pending.push(pending_and_reason);
+                    })
                   }
                 })
 
@@ -355,8 +358,13 @@
       dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', room_id).get().then((snapshot) => {
         snapshot.docs.forEach(dok => {
           let current_member_database = dok.data().matches_join;
+          let current_pending_database = dok.data().pending;
           current_member_database.push(dok.data().owner);
-          // CHECK IF THERE IS MORE PEOPLE AT DATABASE
+
+          console.log("current_pending_database", current_pending_database);
+          console.log("first_pending", first_pending);
+
+          // FOR MEMBER (CHECK IF THERE IS MORE PEOPLE AT DATABASE)
           if (current_member_database.length < first_member.length) {
             let name_to_delete = arr_diff(current_member_database, first_member);
             let element_to_delete = document.getElementById(name_to_delete);
@@ -367,6 +375,32 @@
               first_member.splice(index_of_name_to_delete, 1);
             }
           }
+
+          /*******************************************************************************************/
+
+          if (current_pending_database.length < first_pending.length) {
+            let temp_reason_array = []
+            first_pending.forEach(outer_array => {
+              let checkReason = temp_reason_array.includes(outer_array[1]);
+              if (!checkReason) {
+                temp_reason_array.push(outer_array[1]);
+              }
+            })
+            let pending_to_delete = arr_diff(current_pending_database, temp_reason_array);
+            console.log("temp_reason_array", temp_reason_array);
+            console.log("pending_to_delete", pending_to_delete);
+
+
+            // let pending_element_to_delete = document.getElementById(pending_to_delete).parentNode.parentNode;
+
+            // // FIND ELEMENT THEN DELETE IT
+            // if (pending_element_to_delete) {
+            //   document.getElementById(pending_to_delete).remove();
+            //   let index_of_pending_to_delete = first_pending.indexOf(pending_to_delete);
+            //   first_pending.splice(index_of_pending_to_delete, 1);
+            // }
+          }
+
         })
       })
     }

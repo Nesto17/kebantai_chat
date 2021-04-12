@@ -151,10 +151,6 @@
     form_room.appendChild(roomslist_room);
   }
 
-  // PREVENT BOUNCE
-  let lastClick2 = 0;
-  const delay = 500;
-
   function arr_diff(a1, a2) {
 
     var a = [],
@@ -178,6 +174,10 @@
 
     return diff;
   }
+
+  // PREVENT BOUNCE
+  let lastClick2 = 0;
+  const delay = 500;
 
   function renderMember(member) {
     if ((lastClick2 + delay) < Date.now()) {
@@ -218,6 +218,7 @@
   let lastClick = 0;
   var first_member = [];
   var first_pending = [];
+  var last_accept_button_id_deleted = "";
 
   function renderMemberAndPending(room_id_firebase) {
     let form_room = document.querySelector(".roomslist");
@@ -233,10 +234,11 @@
               let member = [change.doc.data().owner];
               member = member.concat(change.doc.data().matches_join);
               member.forEach(id => {
-                if (id.length > 0) {
+                let check_member_in_first_member = first_member.includes(id);
+                if (!check_member_in_first_member) {
                   first_member.push(id);
                 }
-                let check_member = document.getElementById(`${id}`);
+                let check_member = document.getElementById(id);
                 if (check_member) {
                   let index_member = member.indexOf(id);
                   member.splice(index_member, 1);
@@ -265,7 +267,10 @@
                     pending_list_member.forEach(pending => {
                       let pending_and_reason = [pending];
                       pending_and_reason.push(data_pending);
-                      first_pending.push(pending_and_reason);
+                      let check_pending_in_first_pending = first_pending.includes(pending_and_reason);
+                      if (!pending_and_reason) {
+                        first_pending.push(pending_and_reason);
+                      }
                     })
                   }
                 })
@@ -290,10 +295,11 @@
               member = member.concat(change.doc.data().matches_join);
               let new_array = [];
               member.forEach(id => {
-                let check_member = document.getElementById(`${id}`);
+                let check_member = document.getElementById(id);
                 if (!check_member) {
                   new_array.push(id);
-                  if (id.length > 0) {
+                  let check_member_in_first_member = first_member.includes(id);
+                  if (!check_member_in_first_member) {
                     first_member.push(id);
                   }
                 }
@@ -301,7 +307,6 @@
               if (new_array.length > 0) {
                 renderMember(new_array);
               }
-
               checkMemberAndPending(room_id_firebase);
 
               // AMOUNT OF MEMBERS
@@ -317,7 +322,7 @@
                   let split_data = data_pending.split("~~");
                   let pending_member_id_to_check = split_data[1];
                   let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
-                  if (!check_pending_member) {
+                  if (!check_pending_member && pending_member_id_to_check != last_accept_button_id_deleted) {
                     pending_list_reason.push(split_data[0]);
                     pending_list_member.push(split_data[1]);
                   }
@@ -325,15 +330,17 @@
                     pending_list_member.forEach(pending => {
                       let pending_and_reason = [pending];
                       pending_and_reason.push(data_pending);
-                      first_pending.push(pending_and_reason);
+                      let check_pending_in_first_pending = first_pending.includes(pending_and_reason);
+                      if (!pending_and_reason) {
+                        first_pending.push(pending_and_reason);
+                      }
                     })
                   }
+                  last_accept_button_id_deleted = "";
                 })
-
                 if (pending_list_member.length > 0) {
                   renderPending(pending_list_member, pending_list_reason);
                 }
-
               } else {
                 var child = pending_members.lastElementChild;
                 while (child) {
@@ -361,9 +368,6 @@
           let current_pending_database = dok.data().pending;
           current_member_database.push(dok.data().owner);
 
-          console.log("current_pending_database", current_pending_database);
-          console.log("first_pending", first_pending);
-
           // FOR MEMBER (CHECK IF THERE IS MORE PEOPLE AT DATABASE)
           if (current_member_database.length < first_member.length) {
             let name_to_delete = arr_diff(current_member_database, first_member);
@@ -377,6 +381,7 @@
           }
 
           /*******************************************************************************************/
+          // DELETE PENDING
 
           if (current_pending_database.length < first_pending.length) {
             let temp_reason_array = []
@@ -387,32 +392,35 @@
               }
             })
             let pending_to_delete = arr_diff(current_pending_database, temp_reason_array);
-            console.log("temp_reason_array", temp_reason_array);
-            console.log("pending_to_delete", pending_to_delete);
 
+            pending_to_delete.forEach(member => {
+              let split_data = member.split("~~");
+              let pending_member_id_to_delete = split_data[1];
+              let pending_element_to_delete = document.getElementById(pending_member_id_to_delete);
 
-            // let pending_element_to_delete = document.getElementById(pending_to_delete).parentNode.parentNode;
+              // // FIND ELEMENT THEN DELETE IT
+              if (pending_element_to_delete) {
+                let pending_parent_to_delete = document.getElementById(pending_member_id_to_delete).parentNode.parentNode;
+                pending_parent_to_delete.remove();
 
-            // // FIND ELEMENT THEN DELETE IT
-            // if (pending_element_to_delete) {
-            //   document.getElementById(pending_to_delete).remove();
-            //   let index_of_pending_to_delete = first_pending.indexOf(pending_to_delete);
-            //   first_pending.splice(index_of_pending_to_delete, 1);
-            // }
+                let array_to_delete = [pending_member_id_to_delete, member];
+                let index_of_pending_to_delete = first_pending.indexOf(array_to_delete);
+                first_pending.splice(index_of_pending_to_delete, 1);
+              }
+            })
           }
-
         })
       })
+      lastClick4 = Date.now();
     }
-    lastClick4 = Date.now();
   }
 
   function renderPending(pending, reason) {
-    var x = pending.length - 1;
+    var x = 0;
     dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
       snapshot.docs.forEach(document => {
         renderPending2(document.data(), reason[x], pending[x]);
-        x -= 1;
+        x += 1;
       })
     })
   }
@@ -557,6 +565,7 @@
       let match_id_room = document.querySelector("#selected_room");
       let match_id = match_id_room.querySelector("input").id.slice(1);
       var re = new RegExp(account_id);
+      last_accept_button_id_deleted = account_id;
 
       dbf.collection('match').doc(match_id).get().then(function (doc) {
         let doc_pending = doc.data().pending;
@@ -581,8 +590,9 @@
       let pending_members = document.querySelector('.pending-members');
       let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
       pending_members.removeChild(button_parent);
-      lastClick3 = Date.now();
+
     }
+    lastClick3 = Date.now();
   }
 
   /* 
@@ -1080,7 +1090,6 @@
       let rejectButton = document.querySelectorAll('.reject-button');
       let pendingMembers = document.querySelectorAll('.members-pending-group');
 
-
       for (let i = 0; i < acceptButton.length; i++) {
         acceptButton[i].addEventListener('click', () => {
           let selected_button = document.querySelectorAll("#selected_button");
@@ -1127,34 +1136,6 @@
         button.addEventListener('click', (e) => {
           e.preventDefault;
           deletePending();
-          //   let account_id = document.querySelector("#selected_button").getAttribute("data-id");
-          //   let match_id_room = document.querySelector("#selected_room");
-          //   let match_id = match_id_room.querySelector("input").id.slice(1);
-          //   var re = new RegExp(account_id);
-
-          //   dbf.collection('match').doc(match_id).get().then(function (doc) {
-          //     let doc_pending = doc.data().pending;
-          //     let data_want_delete = "";
-
-          //     doc_pending.forEach(data => {
-          //       let match = data.match(re);
-          //       if (match) {
-          //         data_want_delete = match.input;
-          //       }
-          //     })
-
-          //     dbf.collection('match').doc(match_id).update({
-          //       pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
-          //     });
-          //   })
-
-          //   dbf.collection('match').doc(match_id).update({
-          //     matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
-          //   });
-
-          //   let pending_members = document.querySelector('.pending-members');
-          //   let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
-          //   pending_members.removeChild(button_parent)
         })
       })
 
@@ -1162,6 +1143,12 @@
       roomlist.forEach(room => {
         room.addEventListener("click", (e) => {
           e.preventDefault();
+          var child = pending_members.lastElementChild;
+          while (child) {
+            pending_members.removeChild(child);
+            child = pending_members.lastElementChild;
+          }
+
           let selected_room = document.querySelectorAll("#selected_room");
           selected_room.forEach(room => {
             room.removeAttribute('id');
@@ -1256,7 +1243,6 @@
       snapshot.docChanges().forEach((change) => {
         if (change.type === "modified") {
           let matches_join_created = change.doc.data().matches_created_join;
-          console.log("Modified data account: ", matches_join_created);
 
           matches_join_created.forEach(id => {
             let check_room = document.getElementById(`/${id}`);

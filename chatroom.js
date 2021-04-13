@@ -178,6 +178,7 @@
   // PREVENT BOUNCE
   let lastClick2 = 0;
   const delay = 500;
+  const delay2 = 1000;
 
   function renderMember(member) {
     if ((lastClick2 + delay) < Date.now()) {
@@ -226,7 +227,7 @@
     let pending_members = document.querySelector('.pending-members');
     let members_amount = document.querySelector('.members-amount');
 
-    if ((lastClick + delay) < Date.now()) {
+    if ((lastClick + delay2) < Date.now()) {
       dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), "==", room_id_firebase).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
@@ -313,47 +314,60 @@
               let total_member = 1 + change.doc.data().matches_join.length;
               members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
 
-              if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
-                let doc_pending_data = change.doc.data().pending;
-                let pending_list_member = [];
-                let pending_list_reason = [];
-
-                doc_pending_data.forEach(data_pending => {
-                  let split_data = data_pending.split("~~");
-                  let pending_member_id_to_check = split_data[1];
-                  let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
-                  if (!check_pending_member && pending_member_id_to_check != last_accept_button_id_deleted) {
-                    pending_list_reason.push(split_data[0]);
-                    pending_list_member.push(split_data[1]);
-                  }
-                  if (doc_pending_data.length > 0) {
-                    pending_list_member.forEach(pending => {
-                      let pending_and_reason = [pending];
-                      pending_and_reason.push(data_pending);
-                      let check_pending_in_first_pending = first_pending.includes(pending_and_reason);
-                      if (!pending_and_reason) {
-                        first_pending.push(pending_and_reason);
-                      }
-                    })
-                  }
-                  last_accept_button_id_deleted = "";
-                })
-                if (pending_list_member.length > 0) {
-                  renderPending(pending_list_member, pending_list_reason);
-                }
-              } else {
-                var child = pending_members.lastElementChild;
-                while (child) {
-                  pending_members.removeChild(child);
-                  child = pending_members.lastElementChild;
-                }
-                renderPendingDisabled();
-              }
+              delete_pending_2(change.doc.data());
             }
           }
         });
       })
       lastClick = Date.now();
+    }
+  }
+
+  var lastClick5 = 0;
+
+  function delete_pending_2(data) {
+    if ((lastClick5 + delay2) < Date.now()) {
+      console.log("delete_pending_2 EXECUTED");
+      if (data.owner == "1fj3C0p3vowY8tCrpHNa") {
+        let doc_pending_data = data.pending;
+        let pending_list_member = [];
+        let pending_list_reason = [];
+
+        doc_pending_data.forEach(data_pending => {
+          let split_data = data_pending.split("~~");
+          let pending_member_id_to_check = split_data[1];
+          let count = 0;
+          let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
+          if (!check_pending_member && pending_member_id_to_check != last_accept_button_id_deleted) {
+            pending_list_reason.push(split_data[0]);
+            pending_list_member.push(split_data[1]);
+          }
+          if (doc_pending_data.length > 0) {
+            pending_list_member.forEach(pending => {
+              let pending_and_reason = [pending];
+              pending_and_reason.push(data_pending);
+              let check_pending_in_first_pending = first_pending.includes(pending_and_reason);
+              if (!pending_and_reason) {
+                first_pending.push(pending_and_reason);
+              }
+            })
+          }
+          count += 1;
+        })
+        last_accept_button_id_deleted = "";
+
+        if (pending_list_member.length > 0) {
+          renderPending(pending_list_member, pending_list_reason);
+        }
+      } else {
+        var child = pending_members.lastElementChild;
+        while (child) {
+          pending_members.removeChild(child);
+          child = pending_members.lastElementChild;
+        }
+        renderPendingDisabled();
+      }
+      lastClick5 = Date.now();
     }
   }
 
@@ -416,11 +430,11 @@
   }
 
   function renderPending(pending, reason) {
-    var x = 0;
+    var x = pending.length - 1;
     dbf.collection('account').where(firebase.firestore.FieldPath.documentId(), 'in', pending).get().then((snapshot) => {
       snapshot.docs.forEach(document => {
         renderPending2(document.data(), reason[x], pending[x]);
-        x += 1;
+        x -= 1;
       })
     })
   }

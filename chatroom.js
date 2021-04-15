@@ -315,6 +315,27 @@
               members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
 
               delete_pending_2(change.doc.data());
+            } else {
+              // CHANGE ROOM COLOR
+              let room_no_owner = document.querySelector("#selected_room");
+              let chat_title_html = document.getElementById("chat_title");
+              room_no_owner.className = "deleted-room roomslist-room";
+              chat_title_html.style.background = "#ff4778";
+              chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+
+              // DELETE MEMBER AND PENDING
+
+              var event_child = event_members.lastElementChild;
+              var pending_child = pending_members.lastElementChild;
+
+              while (event_child) {
+                event_members.removeChild(event_child);
+                event_child = event_members.lastElementChild;
+              }
+              while (pending_child) {
+                pending_members.removeChild(pending_child);
+                pending_child = pending_members.lastElementChild;
+              }
             }
           }
         });
@@ -379,28 +400,21 @@
         snapshot.docs.forEach(dok => {
           let current_member_database = dok.data().matches_join;
           let current_pending_database = dok.data().pending;
-          console.log("current_member_database", current_pending_database);
-          console.log("first_member", first_member);
           current_member_database.push(dok.data().owner);
 
           // FOR MEMBER (CHECK IF THERE IS MORE PEOPLE AT DATABASE)
           if (current_member_database.length < first_member.length) {
             let name_to_delete = arr_diff(current_member_database, first_member);
-            console.log("name to delete", name_to_delete);
             let element_to_delete = document.getElementById(name_to_delete);
             // FIND ELEMENT THEN DELETE IT
             if (element_to_delete) {
               document.getElementById(name_to_delete).remove();
               name_to_delete.forEach(name => {
                 let index_of_name_to_delete = first_member.indexOf(name);
-                console.log("index_of_name_to_delete", index_of_name_to_delete);
                 first_member.splice(index_of_name_to_delete, 1);
               })
             }
           }
-
-          console.log("after1", current_member_database);
-          console.log("after2", first_member);
 
           /*******************************************************************************************/
           // DELETE PENDING
@@ -1260,26 +1274,26 @@
   let membersTab = document.querySelector('.members-tab');
 
 
-  dbf.collection("account").where(firebase.firestore.FieldPath.documentId(), "==", "MXd9rXgzZOvPLldbcyCY")
-    .onSnapshot((snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "modified") {
-          let matches_join_created = change.doc.data().matches_created_join;
+  // dbf.collection("account").where(firebase.firestore.FieldPath.documentId(), "==", "MXd9rXgzZOvPLldbcyCY")
+  //   .onSnapshot((snapshot) => {
+  //     snapshot.docChanges().forEach((change) => {
+  //       if (change.type === "modified") {
+  //         let matches_join_created = change.doc.data().matches_created_join;
 
-          matches_join_created.forEach(id => {
-            let check_room = document.getElementById(`/${id}`);
-            if (!check_room) {
-              dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', id).get().then((snapshot) => {
-                snapshot.docs.forEach(dok => {
-                  let owner = true;
-                  if (!dok.data().owner) {
-                    owner = false;
-                  }
-                  renderRoom(dok.data(), dok.id, owner);
-                })
-              })
-            }
-          })
-        }
-      });
-    });
+  //         matches_join_created.forEach(id => {
+  //           let check_room = document.getElementById(`/${id}`);
+  //           if (!check_room) {
+  //             dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', id).get().then((snapshot) => {
+  //               snapshot.docs.forEach(dok => {
+  //                 let owner = true;
+  //                 if (!dok.data().owner) {
+  //                   owner = false;
+  //                 }
+  //                 renderRoom(dok.data(), dok.id, owner);
+  //               })
+  //             })
+  //           }
+  //         })
+  //       }
+  //     });
+  //   });

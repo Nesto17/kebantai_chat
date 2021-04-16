@@ -21,6 +21,8 @@
     timestampsInSnapshots: true
   });
 
+  /**********************************************************************************************/
+
   var chat_others_toggle = document.createElement('div')
   chat_others_toggle.setAttribute('id', 'chat_others_toggle')
   chat_others_toggle.classList.add('chat_toggle')
@@ -149,9 +151,34 @@
     form_room.appendChild(roomslist_room);
   }
 
+  function arr_diff(a1, a2) {
+
+    var a = [],
+      diff = [];
+
+    for (var i = 0; i < a1.length; i++) {
+      a[a1[i]] = true;
+    }
+
+    for (var i = 0; i < a2.length; i++) {
+      if (a[a2[i]]) {
+        delete a[a2[i]];
+      } else {
+        a[a2[i]] = true;
+      }
+    }
+
+    for (var k in a) {
+      diff.push(k);
+    }
+
+    return diff;
+  }
+
   // PREVENT BOUNCE
   let lastClick2 = 0;
   const delay = 500;
+  const delay2 = 1000;
 
   function renderMember(member) {
     if ((lastClick2 + delay) < Date.now()) {
@@ -190,6 +217,9 @@
 
   // PREVENT BOUNCE
   let lastClick = 0;
+  var first_member = [];
+  var first_pending = [];
+  var last_accept_button_id_deleted = "";
 
   function renderMemberAndPending(room_id_firebase) {
     let form_room = document.querySelector(".roomslist");
@@ -197,7 +227,7 @@
     let pending_members = document.querySelector('.pending-members');
     let members_amount = document.querySelector('.members-amount');
 
-    if ((lastClick + delay) < Date.now()) {
+    if ((lastClick + delay2) < Date.now()) {
       dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), "==", room_id_firebase).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === "added") {
@@ -205,7 +235,11 @@
               let member = [change.doc.data().owner];
               member = member.concat(change.doc.data().matches_join);
               member.forEach(id => {
-                let check_member = document.getElementById(`${id}`);
+                let check_member_in_first_member = first_member.includes(id);
+                if (!check_member_in_first_member) {
+                  first_member.push(id);
+                }
+                let check_member = document.getElementById(id);
                 if (check_member) {
                   let index_member = member.indexOf(id);
                   member.splice(index_member, 1);
@@ -218,12 +252,6 @@
               members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
 
               if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
-                var child = pending_members.lastElementChild;
-                while (child) {
-                  pending_members.removeChild(child);
-                  child = pending_members.lastElementChild;
-                }
-
                 let doc_pending_data = change.doc.data().pending;
                 let pending_list_member = [];
                 let pending_list_reason = [];
@@ -235,6 +263,16 @@
                   if (!check_pending_member) {
                     pending_list_reason.push(split_data[0]);
                     pending_list_member.push(split_data[1]);
+                  }
+                  if (doc_pending_data.length > 0) {
+                    pending_list_member.forEach(pending => {
+                      let pending_and_reason = [pending];
+                      pending_and_reason.push(data_pending);
+                      let check_pending_in_first_pending = first_pending.includes(pending_and_reason);
+                      if (!pending_and_reason) {
+                        first_pending.push(pending_and_reason);
+                      }
+                    })
                   }
                 })
 
@@ -258,61 +296,158 @@
               member = member.concat(change.doc.data().matches_join);
               let new_array = [];
               member.forEach(id => {
-                let check_member = document.getElementById(`${id}`);
+                let check_member = document.getElementById(id);
                 if (!check_member) {
                   new_array.push(id);
+                  let check_member_in_first_member = first_member.includes(id);
+                  if (!check_member_in_first_member) {
+                    first_member.push(id);
+                  }
                 }
               })
               if (new_array.length > 0) {
                 renderMember(new_array);
               }
-
-              // DELETE USER FROM MEMBER SECTION
-
+              checkMemberAndPending(room_id_firebase);
 
               // AMOUNT OF MEMBERS
               let total_member = 1 + change.doc.data().matches_join.length;
               members_amount.innerHTML = total_member + ' / ' + change.doc.data().limit;
 
-              if (change.doc.data().owner == "1fj3C0p3vowY8tCrpHNa") {
-                var child = pending_members.lastElementChild;
-                while (child) {
-                  pending_members.removeChild(child);
-                  child = pending_members.lastElementChild;
-                }
+              delete_pending_2(change.doc.data());
+            } else {
+              // CHANGE ROOM COLOR
+              let room_no_owner = document.querySelector("#selected_room");
+              let chat_title_html = document.getElementById("chat_title");
+              room_no_owner.className = "deleted-room roomslist-room";
+              chat_title_html.style.background = "#ff4778";
+              chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
 
-                let doc_pending_data = change.doc.data().pending;
-                let pending_list_member = [];
-                let pending_list_reason = [];
+              // DELETE MEMBER AND PENDING
 
-                doc_pending_data.forEach(data_pending => {
-                  let split_data = data_pending.split("~~");
-                  let pending_member_id_to_check = split_data[1];
-                  let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
-                  if (!check_pending_member) {
-                    pending_list_reason.push(split_data[0]);
-                    pending_list_member.push(split_data[1]);
-                  }
-                })
+              var event_child = event_members.lastElementChild;
+              var pending_child = pending_members.lastElementChild;
 
-                if (pending_list_member.length > 0) {
-                  renderPending(pending_list_member, pending_list_reason);
-                }
-
-              } else {
-                var child = pending_members.lastElementChild;
-                while (child) {
-                  pending_members.removeChild(child);
-                  child = pending_members.lastElementChild;
-                }
-                renderPendingDisabled();
+              while (event_child) {
+                event_members.removeChild(event_child);
+                event_child = event_members.lastElementChild;
+              }
+              while (pending_child) {
+                pending_members.removeChild(pending_child);
+                pending_child = pending_members.lastElementChild;
               }
             }
           }
         });
       })
       lastClick = Date.now();
-      last_member = temp_last_member;
+    }
+  }
+
+  var lastClick5 = 0;
+
+  function delete_pending_2(data) {
+    if ((lastClick5 + delay2) < Date.now()) {
+      if (data.owner == "1fj3C0p3vowY8tCrpHNa") {
+        let doc_pending_data = data.pending;
+        let pending_list_member = [];
+        let pending_list_reason = [];
+
+        doc_pending_data.forEach(data_pending => {
+          let split_data = data_pending.split("~~");
+          let pending_member_id_to_check = split_data[1];
+          let count = 0;
+          let check_pending_member = document.getElementById(`${pending_member_id_to_check}`);
+          if (!check_pending_member && pending_member_id_to_check != last_accept_button_id_deleted) {
+            pending_list_reason.push(split_data[0]);
+            pending_list_member.push(split_data[1]);
+          }
+          if (doc_pending_data.length > 0) {
+            pending_list_member.forEach(pending => {
+              let pending_and_reason = [pending];
+              pending_and_reason.push(data_pending);
+              let check_pending_in_first_pending = first_pending.includes(pending_and_reason);
+              if (!pending_and_reason) {
+                first_pending.push(pending_and_reason);
+              }
+            })
+          }
+          count += 1;
+        })
+        last_accept_button_id_deleted = "";
+
+        if (pending_list_member.length > 0) {
+          renderPending(pending_list_member, pending_list_reason);
+        }
+      } else {
+        var child = pending_members.lastElementChild;
+        while (child) {
+          pending_members.removeChild(child);
+          child = pending_members.lastElementChild;
+        }
+        renderPendingDisabled();
+      }
+      lastClick5 = Date.now();
+    }
+  }
+
+  // PREVENT BOUNCE 
+  let lastClick4 = 0;
+
+  function checkMemberAndPending(room_id) {
+    if ((lastClick4 + delay) < Date.now()) {
+      dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', room_id).get().then((snapshot) => {
+        snapshot.docs.forEach(dok => {
+          let current_member_database = dok.data().matches_join;
+          let current_pending_database = dok.data().pending;
+          current_member_database.push(dok.data().owner);
+
+          // FOR MEMBER (CHECK IF THERE IS MORE PEOPLE AT DATABASE)
+          if (current_member_database.length < first_member.length) {
+            let name_to_delete = arr_diff(current_member_database, first_member);
+            let element_to_delete = document.getElementById(name_to_delete);
+            // FIND ELEMENT THEN DELETE IT
+            if (element_to_delete) {
+              document.getElementById(name_to_delete).remove();
+              name_to_delete.forEach(name => {
+                let index_of_name_to_delete = first_member.indexOf(name);
+                first_member.splice(index_of_name_to_delete, 1);
+              })
+            }
+          }
+
+          /*******************************************************************************************/
+          // DELETE PENDING
+
+          if (current_pending_database.length < first_pending.length) {
+            let temp_reason_array = []
+            first_pending.forEach(outer_array => {
+              let checkReason = temp_reason_array.includes(outer_array[1]);
+              if (!checkReason) {
+                temp_reason_array.push(outer_array[1]);
+              }
+            })
+            let pending_to_delete = arr_diff(current_pending_database, temp_reason_array);
+
+            pending_to_delete.forEach(member => {
+              let split_data = member.split("~~");
+              let pending_member_id_to_delete = split_data[1];
+              let pending_element_to_delete = document.getElementById(pending_member_id_to_delete);
+
+              // // FIND ELEMENT THEN DELETE IT
+              if (pending_element_to_delete) {
+                let pending_parent_to_delete = document.getElementById(pending_member_id_to_delete).parentNode.parentNode;
+                pending_parent_to_delete.remove();
+
+                let array_to_delete = [pending_member_id_to_delete, member];
+                let index_of_pending_to_delete = first_pending.indexOf(array_to_delete);
+                first_pending.splice(index_of_pending_to_delete, 1);
+              }
+            })
+          }
+        })
+      })
+      lastClick4 = Date.now();
     }
   }
 
@@ -466,6 +601,7 @@
       let match_id_room = document.querySelector("#selected_room");
       let match_id = match_id_room.querySelector("input").id.slice(1);
       var re = new RegExp(account_id);
+      last_accept_button_id_deleted = account_id;
 
       dbf.collection('match').doc(match_id).get().then(function (doc) {
         let doc_pending = doc.data().pending;
@@ -490,8 +626,9 @@
       let pending_members = document.querySelector('.pending-members');
       let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
       pending_members.removeChild(button_parent);
-      lastClick3 = Date.now();
+
     }
+    lastClick3 = Date.now();
   }
 
   /* 
@@ -989,7 +1126,6 @@
       let rejectButton = document.querySelectorAll('.reject-button');
       let pendingMembers = document.querySelectorAll('.members-pending-group');
 
-
       for (let i = 0; i < acceptButton.length; i++) {
         acceptButton[i].addEventListener('click', () => {
           let selected_button = document.querySelectorAll("#selected_button");
@@ -1036,34 +1172,6 @@
         button.addEventListener('click', (e) => {
           e.preventDefault;
           deletePending();
-          //   let account_id = document.querySelector("#selected_button").getAttribute("data-id");
-          //   let match_id_room = document.querySelector("#selected_room");
-          //   let match_id = match_id_room.querySelector("input").id.slice(1);
-          //   var re = new RegExp(account_id);
-
-          //   dbf.collection('match').doc(match_id).get().then(function (doc) {
-          //     let doc_pending = doc.data().pending;
-          //     let data_want_delete = "";
-
-          //     doc_pending.forEach(data => {
-          //       let match = data.match(re);
-          //       if (match) {
-          //         data_want_delete = match.input;
-          //       }
-          //     })
-
-          //     dbf.collection('match').doc(match_id).update({
-          //       pending: firebase.firestore.FieldValue.arrayRemove(data_want_delete)
-          //     });
-          //   })
-
-          //   dbf.collection('match').doc(match_id).update({
-          //     matches_join: firebase.firestore.FieldValue.arrayUnion(account_id)
-          //   });
-
-          //   let pending_members = document.querySelector('.pending-members');
-          //   let button_parent = document.querySelector("#selected_button").parentNode.parentNode;
-          //   pending_members.removeChild(button_parent)
         })
       })
 
@@ -1071,6 +1179,12 @@
       roomlist.forEach(room => {
         room.addEventListener("click", (e) => {
           e.preventDefault();
+          var child = pending_members.lastElementChild;
+          while (child) {
+            pending_members.removeChild(child);
+            child = pending_members.lastElementChild;
+          }
+
           let selected_room = document.querySelectorAll("#selected_room");
           selected_room.forEach(room => {
             room.removeAttribute('id');
@@ -1160,27 +1274,26 @@
   let membersTab = document.querySelector('.members-tab');
 
 
-  dbf.collection("account").where(firebase.firestore.FieldPath.documentId(), "==", "MXd9rXgzZOvPLldbcyCY")
-    .onSnapshot((snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "modified") {
-          let matches_join_created = change.doc.data().matches_created_join;
-          console.log("Modified data account: ", matches_join_created);
+  // dbf.collection("account").where(firebase.firestore.FieldPath.documentId(), "==", "MXd9rXgzZOvPLldbcyCY")
+  //   .onSnapshot((snapshot) => {
+  //     snapshot.docChanges().forEach((change) => {
+  //       if (change.type === "modified") {
+  //         let matches_join_created = change.doc.data().matches_created_join;
 
-          matches_join_created.forEach(id => {
-            let check_room = document.getElementById(`/${id}`);
-            if (!check_room) {
-              dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', id).get().then((snapshot) => {
-                snapshot.docs.forEach(dok => {
-                  let owner = true;
-                  if (!dok.data().owner) {
-                    owner = false;
-                  }
-                  renderRoom(dok.data(), dok.id, owner);
-                })
-              })
-            }
-          })
-        }
-      });
-    });
+  //         matches_join_created.forEach(id => {
+  //           let check_room = document.getElementById(`/${id}`);
+  //           if (!check_room) {
+  //             dbf.collection('match').where(firebase.firestore.FieldPath.documentId(), '==', id).get().then((snapshot) => {
+  //               snapshot.docs.forEach(dok => {
+  //                 let owner = true;
+  //                 if (!dok.data().owner) {
+  //                   owner = false;
+  //                 }
+  //                 renderRoom(dok.data(), dok.id, owner);
+  //               })
+  //             })
+  //           }
+  //         })
+  //       }
+  //     });
+  //   });

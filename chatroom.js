@@ -471,9 +471,9 @@
     let p = document.createElement('p');
 
     if (data.sex == "male") {
-      p.className = "members-event-list male";
+      p.className = "members-pending-list male";
     } else {
-      p.className = "members-event-list female";
+      p.className = "members-pending-list female";
     }
 
     p.innerHTML = data.username;
@@ -1227,9 +1227,12 @@
             } else if (class_room == "badminton-room") {
               chat_title_html.style.background = "#7600db";
               chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 125, 255, 0.3)";
-            } else {
+            } else if (class_room == "volleyball-room") {
               chat_title_html.style.background = "#ff4778";
               chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+            } else {
+              chat_title_html.style.background = "#ff3b3b";
+              chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(252, 59, 59, 0.5)";
             }
           }
         })

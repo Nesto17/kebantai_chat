@@ -1013,6 +1013,7 @@
       refresh_chat(room_id_new) {
         var chat_content_container = document.getElementById('chat_content_container')
 
+        // ANNOUNCEMENT FOR DELETE
         var announcementBox = document.createElement('div')
         var announcementTitle = document.createElement('h4')
         var announcementDesc = document.createElement('div');
@@ -1027,9 +1028,16 @@
         announcementSubtitle.setAttribute('class', 'announcement-subtitle');
         announcementReason.setAttribute('class', 'announcement-reason');
 
-        announcementTitle.innerHTML = "Ernest has cancelled the event";
+        announcementTitle.innerHTML = "The Owner has cancelled the event";
         announcementSubtitle.innerHTML = "The owner's reason:  ";
         announcementReason.innerHTML = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu."
+
+        /*
+
+        *********************************************************\n\nTHE OWNER HAS CANCELLED THE EVENT\n\nThe owner's reason: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu.\n\n*********************************************************
+        
+        
+        */
 
         chat_content_container.append(announcementBox)
 

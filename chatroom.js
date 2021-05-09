@@ -1212,14 +1212,6 @@
             child = event_members.lastElementChild;
           }
 
-          //DELETE MESSAGES IN CHAT CONTAINER
-          var chat_content_container = document.querySelector("#chat_content_container");
-          var message_want_to_be_deleted = chat_content_container.lastElementChild;
-          while (message_want_to_be_deleted) {
-            chat_content_container.removeChild(message_want_to_be_deleted);
-            message_want_to_be_deleted = chat_content_container.lastElementChild;
-          }
-
           let selected_room = document.querySelectorAll("#selected_room");
           selected_room.forEach(room => {
             room.removeAttribute('id');
@@ -1230,6 +1222,13 @@
 
           if (input_id == "deleted") {
             document.querySelector("#chat_input").disabled = true;
+            //DELETE MESSAGES IN CHAT CONTAINER
+            var chat_content_container = document.querySelector("#chat_content_container");
+            var message_want_to_be_deleted = chat_content_container.lastElementChild;
+            while (message_want_to_be_deleted) {
+              chat_content_container.removeChild(message_want_to_be_deleted);
+              message_want_to_be_deleted = chat_content_container.lastElementChild;
+            }
           } else {
             document.querySelector("#chat_input").disabled = false;
           }

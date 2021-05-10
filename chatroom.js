@@ -107,6 +107,16 @@
         renderRoom(dok.data(), dok.id, owner);
       })
     })
+
+    dbf.collection('match').where("owner", "==", "MXd9rXgzZOvPLldbcyCY").get().then((snapshot) => {
+      snapshot.docs.forEach(dok => {
+        let owner = true;
+        if (!dok.data().owner) {
+          owner = false;
+        }
+        renderRoom(dok.data(), dok.id, owner);
+      })
+    })
   })
 
   function renderRoom(data, id, owner_state) {
@@ -322,20 +332,61 @@
 
               delete_pending_2(change.doc.data());
             } else if (!change.doc.data().owner && change.doc.data().status == "deleted") {
-              // CHANGE ROOM COLOR
-              let room_no_owner = document.querySelector("#selected_room");
-              let chat_title_html = document.getElementById("chat_title");
-              room_no_owner.className = "deleted-room roomslist-room";
-              let label_room_no_owner = room_no_owner.querySelector("label");
-              label_room_no_owner.setAttribute("for", "deleted");
-              document.querySelector("#chat_input").disabled = true;
+              let selected_input = document.getElementById(`/${change.doc.id}`);
+              let input_parent_div = selected_input.parentNode;
+              let label = input_parent_div.querySelector("label");
 
+              // CHANGE ROOM COLOR
+              let selected_room = document.getElementById("selected_room");
+              let input_to_check = selected_room.querySelector("input");
+              input_parent_div.className = "deleted-room roomslist-room";
+              label.setAttribute("for", "deleted");
+
+              if (input_to_check.id === `/${change.doc.id}`) {
+                let chat_title_html = document.getElementById("chat_title");
+                document.querySelector("#chat_input").disabled = true;
+
+                chat_title_html.style.background = "#ff4778";
+                chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+
+                // DELETE MEMBER, PENDING, AND MESSAGE
+                var event_child = event_members.lastElementChild;
+                var pending_child = pending_members.lastElementChild;
+
+                while (event_child) {
+                  event_members.removeChild(event_child);
+                  event_child = event_members.lastElementChild;
+                }
+                while (pending_child) {
+                  pending_members.removeChild(pending_child);
+                  pending_child = pending_members.lastElementChild;
+                }
+              }
+            }
+          } else if (change.type === "removed") {
+            let selected_input = document.getElementById(`/${change.doc.id}`);
+            let input_parent_div = selected_input.parentNode;
+            let selected_room = document.getElementById("selected_room");
+            let input_to_check = selected_room.querySelector("input");
+            let rooms_list = document.querySelector(".roomslist");
+
+            roomslist_room.removeChild(div_to_delete);
+
+            if (input_to_check.id === `/${change.doc.id}`) {
+              let chat_title_html = document.getElementById("chat_title");
+              let chat_title_h4 = chat_title_html.querySelector("h4");
+              chat_title_h4.innerHTML = "The previous room was deleted."
               chat_title_html.style.background = "#ff4778";
               chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
 
-              // DELETE MEMBER, PENDING, AND MESSAGE
+              document.querySelector("#chat_input").disabled = true;
+
+              // DELETE MEMBER, PENDING, AND MESSAGE.
               var event_child = event_members.lastElementChild;
               var pending_child = pending_members.lastElementChild;
+
+              var chat_content_container = document.getElementById("chat_content_container");
+              var chat_child = chat_content_container.lastElementChild;
 
               while (event_child) {
                 event_members.removeChild(event_child);
@@ -344,6 +395,10 @@
               while (pending_child) {
                 pending_members.removeChild(pending_child);
                 pending_child = pending_members.lastElementChild;
+              }
+              while (chat_child) {
+                chat_content_container.removeChild(chat_child);
+                chat_child = chat_content_container.lastElementChild;
               }
             }
           }
@@ -1223,7 +1278,6 @@
           let label = room.querySelector("label");
           let label_for = label.getAttribute("for");
 
-          console.log(label_for);
           if (label_for == "deleted") {
             document.querySelector("#chat_input").disabled = true;
           } else {

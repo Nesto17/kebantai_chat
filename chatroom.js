@@ -136,17 +136,15 @@
     let id_input = "/" + id;
     input.id = id_input;
 
-    if (data.status) {
-      if (data.status == "deleted") {
-        let id_input = "/deleted";
-        input.id = "deleted";
-      }
-    }
-
-
     // CREATE LABEL
     let label = document.createElement("label");
     label.setAttribute("for", id_input);
+
+    if (data.status) {
+      if (data.status == "deleted") {
+        label.setAttribute("for", "deleted");
+      }
+    }
 
     // CREATE SPAN
     let span = document.createElement('span');
@@ -328,8 +326,8 @@
               let room_no_owner = document.querySelector("#selected_room");
               let chat_title_html = document.getElementById("chat_title");
               room_no_owner.className = "deleted-room roomslist-room";
-              let input_room_no_owner = room_no_owner.querySelector("input");
-              input_room_no_owner.id = "deleted";
+              let label_room_no_owner = room_no_owner.querySelector("label");
+              label_room_no_owner.setAttribute("for", "deleted");
               document.querySelector("#chat_input").disabled = true;
 
               chat_title_html.style.background = "#ff4778";
@@ -338,8 +336,6 @@
               // DELETE MEMBER, PENDING, AND MESSAGE
               var event_child = event_members.lastElementChild;
               var pending_child = pending_members.lastElementChild;
-              var chat_content_container = document.querySelector("#chat_content_container");
-              var message_want_to_be_deleted = chat_content_container.lastElementChild;
 
               while (event_child) {
                 event_members.removeChild(event_child);
@@ -348,10 +344,6 @@
               while (pending_child) {
                 pending_members.removeChild(pending_child);
                 pending_child = pending_members.lastElementChild;
-              }
-              while (message_want_to_be_deleted) {
-                chat_content_container.removeChild(message_want_to_be_deleted);
-                message_want_to_be_deleted = chat_content_container.lastElementChild;
               }
             }
           }
@@ -1224,19 +1216,16 @@
           selected_room.forEach(room => {
             room.removeAttribute('id');
           })
+
           room.id = "selected_room";
           let input = room.querySelector("input");
           let input_id = input.id;
+          let label = room.querySelector("label");
+          let label_for = label.getAttribute("for");
 
-          if (input_id == "deleted") {
+          console.log(label_for);
+          if (label_for == "deleted") {
             document.querySelector("#chat_input").disabled = true;
-            //DELETE MESSAGES IN CHAT CONTAINER
-            var chat_content_container = document.querySelector("#chat_content_container");
-            var message_want_to_be_deleted = chat_content_container.lastElementChild;
-            while (message_want_to_be_deleted) {
-              chat_content_container.removeChild(message_want_to_be_deleted);
-              message_want_to_be_deleted = chat_content_container.lastElementChild;
-            }
           } else {
             document.querySelector("#chat_input").disabled = false;
           }
@@ -1247,10 +1236,8 @@
             room_id = input_id;
             let room_id_firebase = input_id.slice(1);
 
-            if (input_id !== "deleted") {
-              renderMemberAndPending(room_id_firebase);
-              app.refresh_chat(room_id);
-            }
+            renderMemberAndPending(room_id_firebase);
+            app.refresh_chat(room_id);
 
             // GANTI TITLE CHATNYA
             let chat_title_html = document.getElementById("chat_title");

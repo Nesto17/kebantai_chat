@@ -107,6 +107,16 @@
         renderRoom(dok.data(), dok.id, owner);
       })
     })
+
+    dbf.collection('match').where("owner", "==", "MXd9rXgzZOvPLldbcyCY").get().then((snapshot) => {
+      snapshot.docs.forEach(dok => {
+        let owner = true;
+        if (!dok.data().owner) {
+          owner = false;
+        }
+        renderRoom(dok.data(), dok.id, owner);
+      })
+    })
   })
 
   function renderRoom(data, id, owner_state) {
@@ -136,17 +146,15 @@
     let id_input = "/" + id;
     input.id = id_input;
 
-    if (data.status) {
-      if (data.status == "deleted") {
-        let id_input = "/deleted";
-        input.id = "deleted";
-      }
-    }
-
-
     // CREATE LABEL
     let label = document.createElement("label");
     label.setAttribute("for", id_input);
+
+    if (data.status) {
+      if (data.status == "deleted") {
+        label.setAttribute("for", "deleted");
+      }
+    }
 
     // CREATE SPAN
     let span = document.createElement('span');
@@ -324,22 +332,61 @@
 
               delete_pending_2(change.doc.data());
             } else if (!change.doc.data().owner && change.doc.data().status == "deleted") {
-              // CHANGE ROOM COLOR
-              let room_no_owner = document.querySelector("#selected_room");
-              let chat_title_html = document.getElementById("chat_title");
-              room_no_owner.className = "deleted-room roomslist-room";
-              let input_room_no_owner = room_no_owner.querySelector("input");
-              input_room_no_owner.id = "deleted";
-              document.querySelector("#chat_input").disabled = true;
+              let selected_input = document.getElementById(`/${change.doc.id}`);
+              let input_parent_div = selected_input.parentNode;
+              let label = input_parent_div.querySelector("label");
 
+              // CHANGE ROOM COLOR
+              let selected_room = document.getElementById("selected_room");
+              let input_to_check = selected_room.querySelector("input");
+              input_parent_div.className = "deleted-room roomslist-room";
+              label.setAttribute("for", "deleted");
+
+              if (input_to_check.id === `/${change.doc.id}`) {
+                let chat_title_html = document.getElementById("chat_title");
+                document.querySelector("#chat_input").disabled = true;
+
+                chat_title_html.style.background = "#ff4778";
+                chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
+
+                // DELETE MEMBER, PENDING, AND MESSAGE
+                var event_child = event_members.lastElementChild;
+                var pending_child = pending_members.lastElementChild;
+
+                while (event_child) {
+                  event_members.removeChild(event_child);
+                  event_child = event_members.lastElementChild;
+                }
+                while (pending_child) {
+                  pending_members.removeChild(pending_child);
+                  pending_child = pending_members.lastElementChild;
+                }
+              }
+            }
+          } else if (change.type === "removed") {
+            let selected_input = document.getElementById(`/${change.doc.id}`);
+            let input_parent_div = selected_input.parentNode;
+            let selected_room = document.getElementById("selected_room");
+            let input_to_check = selected_room.querySelector("input");
+            let rooms_list = document.querySelector(".roomslist");
+
+            roomslist_room.removeChild(div_to_delete);
+
+            if (input_to_check.id === `/${change.doc.id}`) {
+              let chat_title_html = document.getElementById("chat_title");
+              let chat_title_h4 = chat_title_html.querySelector("h4");
+              chat_title_h4.innerHTML = "The previous room was deleted."
               chat_title_html.style.background = "#ff4778";
               chat_title_html.style["box-shadow"] = "0px 0px 15px rgba(255, 160, 184, 0.3)";
 
-              // DELETE MEMBER, PENDING, AND MESSAGE
+              document.querySelector("#chat_input").disabled = true;
+
+              // DELETE MEMBER, PENDING, AND MESSAGE.
               var event_child = event_members.lastElementChild;
               var pending_child = pending_members.lastElementChild;
-              var chat_content_container = document.querySelector("#chat_content_container");
-              var message_want_to_be_deleted = chat_content_container.lastElementChild;
+
+              var chat_content_container = document.getElementById("chat_content_container");
+              var chat_child = chat_content_container.lastElementChild;
 
               while (event_child) {
                 event_members.removeChild(event_child);
@@ -349,9 +396,9 @@
                 pending_members.removeChild(pending_child);
                 pending_child = pending_members.lastElementChild;
               }
-              while (message_want_to_be_deleted) {
-                chat_content_container.removeChild(message_want_to_be_deleted);
-                message_want_to_be_deleted = chat_content_container.lastElementChild;
+              while (chat_child) {
+                chat_content_container.removeChild(chat_child);
+                chat_child = chat_content_container.lastElementChild;
               }
             }
           }
@@ -1013,6 +1060,7 @@
       refresh_chat(room_id_new) {
         var chat_content_container = document.getElementById('chat_content_container')
 
+        // ANNOUNCEMENT FOR DELETE
         var announcementBox = document.createElement('div')
         var announcementTitle = document.createElement('h4')
         var announcementDesc = document.createElement('div');
@@ -1027,9 +1075,16 @@
         announcementSubtitle.setAttribute('class', 'announcement-subtitle');
         announcementReason.setAttribute('class', 'announcement-reason');
 
-        announcementTitle.innerHTML = "Ernest has cancelled the event";
+        announcementTitle.innerHTML = "The Owner has cancelled the event";
         announcementSubtitle.innerHTML = "The owner's reason:  ";
         announcementReason.innerHTML = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu."
+
+        /*
+
+        *********************************************************\n\nTHE OWNER HAS CANCELLED THE EVENT\n\nThe owner's reason: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu.\n\n*********************************************************
+        
+        
+        */
 
         chat_content_container.append(announcementBox)
 
@@ -1216,19 +1271,15 @@
           selected_room.forEach(room => {
             room.removeAttribute('id');
           })
+
           room.id = "selected_room";
           let input = room.querySelector("input");
           let input_id = input.id;
+          let label = room.querySelector("label");
+          let label_for = label.getAttribute("for");
 
-          if (input_id == "deleted") {
+          if (label_for == "deleted") {
             document.querySelector("#chat_input").disabled = true;
-            //DELETE MESSAGES IN CHAT CONTAINER
-            var chat_content_container = document.querySelector("#chat_content_container");
-            var message_want_to_be_deleted = chat_content_container.lastElementChild;
-            while (message_want_to_be_deleted) {
-              chat_content_container.removeChild(message_want_to_be_deleted);
-              message_want_to_be_deleted = chat_content_container.lastElementChild;
-            }
           } else {
             document.querySelector("#chat_input").disabled = false;
           }
@@ -1239,10 +1290,8 @@
             room_id = input_id;
             let room_id_firebase = input_id.slice(1);
 
-            if (input_id !== "deleted") {
-              renderMemberAndPending(room_id_firebase);
-              app.refresh_chat(room_id);
-            }
+            renderMemberAndPending(room_id_firebase);
+            app.refresh_chat(room_id);
 
             // GANTI TITLE CHATNYA
             let chat_title_html = document.getElementById("chat_title");
